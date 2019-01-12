@@ -1,0 +1,28 @@
+{
+  "name": "project_mania_api",
+  "version": "1.0.0",
+  "main": " app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/khcdev/project_mania_api.git"
+  },
+  "author": "jason",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/khcdev/project_mania_api/issues"
+  },
+  "homepage": "https://github.com/khcdev/project_mania_api#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "mocha": "^5.2.0"
+  },
+  "description": ""
+}
