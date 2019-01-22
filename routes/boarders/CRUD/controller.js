@@ -5,7 +5,7 @@ const gm = require('gm');
 // imagae 저장시 어디에 저장할지 정하는 코드
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, __dirname + '/../../../uploads/');
     },
     filename: (req, file, cb) => {
         const extension = path.extname(file.originalname);

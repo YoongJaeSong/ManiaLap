@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const router = require('./router');
-const models = require('./models/index');
+// const models = require('./models/index');
 
 log = (req, res, next)=>{
     let method = req.method;
@@ -12,19 +12,15 @@ log = (req, res, next)=>{
 }
 
 app.use('/', log);
-app.use(express.static('uploads'));
-
-app.set('views', './views');
-app.set('view engine', 'ejs');
-app.engine('html', require('ejs').renderFile);
-
+app.use(express.static(__dirname + '/uploads'));
+/*
 models.sequelize.sync().then(()=>{
     console.log('DB연결 성공');
 }).catch((err)=>{
     console.log("DB연결 실패");
     console.log(err);
 })
-
+*/
 app.get('/', (req, res)=>{
     res.status(200);
     res.json({
