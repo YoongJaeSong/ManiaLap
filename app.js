@@ -13,6 +13,7 @@ log = (req, res, next)=>{
 
 app.use('/', log);
 app.use(express.static(__dirname + '/uploads'));
+
 /*
 models.sequelize.sync().then(()=>{
     console.log('DB연결 성공');
@@ -21,6 +22,7 @@ models.sequelize.sync().then(()=>{
     console.log(err);
 })
 */
+
 app.get('/', (req, res)=>{
     res.status(200);
     res.json({

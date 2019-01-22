@@ -59,6 +59,9 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# webstorm 
+.idea/
+
 # dotenv environment variables file
 .env
 .env.test
@@ -86,5 +89,8 @@ typings/
 
 # www file in bin directories
 bin/*
+
+# multimedai type 
+uploads/
 
 # End of https://www.gitignore.io/api/node

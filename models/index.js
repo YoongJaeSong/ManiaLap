@@ -1,10 +1,9 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
+// config.json을 통해서 DB정보를 확인 및 접속하기 위한 데이터들이 담겨져 있다.
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
@@ -36,5 +35,7 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+db.Content = require('./contents')(sequelize, Sequelize);
 
 module.exports = db;
