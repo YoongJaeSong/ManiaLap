@@ -88,7 +88,7 @@ typings/
 bin/**
 
 # All of files in uploads
-createBoard/uploads/**
+uploads/**
 
 # .idea directory
 .idea/
