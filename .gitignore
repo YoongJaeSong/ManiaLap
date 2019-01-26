@@ -89,6 +89,7 @@ bin/**
 
 # All of files in uploads
 uploads/**
+!uploads/.keep
 
 # .idea directory
 .idea/
