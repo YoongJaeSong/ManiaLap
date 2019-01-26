@@ -36,6 +36,14 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+db.User = require('./users')(sequelize, Sequelize);
+db.Story = require('./stories')(sequelize, Sequelize);
+db.Section = require('./sections')(sequelize, Sequelize);
 db.Content = require('./contents')(sequelize, Sequelize);
+db.Hashtag = require('./hashtags')(sequelize, Sequelize);
+db.Story_Hashtag = require('./story_hashtags')(sequelize, Sequelize);
 
 module.exports = db;
+
+// model를 만들기위해 먼저 실행해야 하는 명령문
+// sequelize-auto -h <host> -d <databaseName> -u <user> -x <password> -p <port> -e <sql type>

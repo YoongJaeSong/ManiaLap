@@ -1,20 +1,15 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('contents', {
+  return sequelize.define('sections', {
     id: {
-      type: DataTypes.INTEGER(10).UNSIGNED,
+      type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true
     },
     title: {
       type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    image_url: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      unique: true
+      allowNull: true
     },
     created_at: {
       type: DataTypes.DATE,
@@ -35,16 +30,8 @@ module.exports = function(sequelize, DataTypes) {
         model: 'stories',
         key: 'id'
       }
-    },
-    sections_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      references: {
-        model: 'sections',
-        key: 'id'
-      }
     }
   }, {
-    tableName: 'contents'
+    tableName: 'sections'
   });
 };
