@@ -6,8 +6,6 @@
     "host": "127.0.0.1",
     "dialect": "mysql",
     "define": {
-      // timestamps: 자동으로 createsAt, updatedAt을 만든다
-      // True: 자동 생성, False: 자동 생성 안함
       "timestamps": false
     }
   },

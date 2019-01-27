@@ -11,17 +11,38 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(45),
       allowNull: false
     },
-    url: {
-      type: DataTypes.STRING(255),
-      allowNull: false
+    image_url: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      unique: true
     },
-    createdAt: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: false
     },
-    updatedAt: {
+    updated_at: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: true
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    stories_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'stories',
+        key: 'id'
+      }
+    },
+    sections_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'sections',
+        key: 'id'
+      }
     }
   }, {
     tableName: 'contents'
