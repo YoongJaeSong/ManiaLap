@@ -18,6 +18,7 @@ log = (req, res, next)=>{
 app.use('/', log);
 app.use(express.static(__dirname + '/uploads'));
 
+
 app.get('/', (req, res)=>{
     res.status(200);
     res.json({

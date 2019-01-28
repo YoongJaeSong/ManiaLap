@@ -65,5 +65,4 @@ exports.createThumbnail = async (req, res) => {
     res.json({
         'msg': 'success'
     });
-
 }
