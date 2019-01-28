@@ -1,6 +1,11 @@
 const express = require('express');
-const app = express();
 const router = require('./router');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger');
+
+const app = express();
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 log = (req, res, next)=>{
     let method = req.method;
