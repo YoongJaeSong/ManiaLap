@@ -1,0 +1,274 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "api 문서",
+    "version": "1.0.0",
+    "title": "Project_mania",
+    "termsOfService": "http://kalin.iptime.org:3100",
+    "contact": {
+      "name": "YoonJae Song"
+    }
+  },
+  "host": "kalin.iptime.org:3100",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "story",
+      "description": "Everything about your Stories"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/stories": {
+      "get": {
+        "tags": [
+          "story"
+        ],
+        "summary": "메인화면",
+        "description": "",
+        "operationId": "addPet",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "여러개의 story가 있는 경우 paging요청으로 추가적으로 story를 요청하기 위해 필요",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "story"
+        ],
+        "summary": "Create story",
+        "description": "",
+        "operationId": "CreateStroy",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "user_id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "story_title",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "story_decription",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "image",
+            "type": "file",
+            "description": "대표 이미지"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success"
+          }
+        }
+      }
+    },
+    "/stories/{story_id}": {
+      "get": {
+        "tags": [
+          "story"
+        ],
+        "summary": "view contents and secction in story",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "story_id",
+            "type": "integer",
+            "required": true,
+            "description": "to confirm what the story"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful to get the story info",
+            "schema": {
+              "type": "string",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "msg": "success"
+            }
+          }
+        }
+      }
+    },
+    "/stories/{story_id}/contents/{content_id}": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "view the content",
+        "description": "",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "story_id",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "content_id",
+            "type": "integer",
+            "required": true,
+            "description": "어떤 content인지 확인하기 위해서 필요"
+          }
+        ],
+        "responses": {
+          "200":{
+            "description": "successful to get the content",
+            "schema": {
+              "type": "string",
+              "properties": {
+                "msg":{
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "msg": "success"
+            }
+          }
+        }
+      }
+    },
+    "/content":{
+      "post":{
+        "tags": ["content"],
+        "summary": "Create content",
+        "description": "",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "required": true,
+            "description": "content title"
+          },
+          {
+            "in": "formData",
+            "name": "description",
+            "type": "string",
+            "required": true,
+            "description": "content description"
+          },{
+            "in": "formData",
+            "name": "image",
+            "type": "file",
+            "required": true,
+            "description": "content image"
+          }
+        ],
+        "responses": {
+          "201":{
+            "description": "successful to create the content",
+            "schema": {
+              "type": "string",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                }
+              }
+            },
+            "examples": {
+              "msg": "success"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "story": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "hashtags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}

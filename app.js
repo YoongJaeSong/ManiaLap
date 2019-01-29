@@ -1,7 +1,18 @@
 const express = require('express');
-const app = express();
 const router = require('./router');
-// const models = require('./models/index');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger');
+
+const app = express();
+
+// cors를 해결하기 위한 미들웨어
+app.use('/', (req, res, next)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
+    next();
+});
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 log = (req, res, next)=>{
     let method = req.method;
@@ -14,14 +25,6 @@ log = (req, res, next)=>{
 app.use('/', log);
 app.use(express.static(__dirname + '/uploads'));
 
-/*
-models.sequelize.sync().then(()=>{
-    console.log('DB연결 성공');
-}).catch((err)=>{
-    console.log("DB연결 실패");
-    console.log(err);
-})
-*/
 
 app.get('/', (req, res)=>{
     res.status(200);

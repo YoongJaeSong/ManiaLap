@@ -27,42 +27,31 @@ const upload = multer({
 
 // upload.single -> 파일 한개만
 // upload.array -> 여러개의 파일을 받을 수 있다.
-let uploads = exports.upload = upload.array('images', 10);
+let uploads = exports.upload = upload.single('image');
 
 // image uploads 요청
-exports.boardUpload = (req, res) => {
+exports.createStroy = (req, res) => {
 
-    // upload된 file들은 req.fies로 받을 수 있다.
-    let images = req.files;
+    let story = {};
+    story = req.body;
+    story['image'] = req.file;
 
     res.status(201);
     res.json({
         'msg': 'success',
-        'files': req.files
+        'story': story
     });
-}
+};
 
+exports.createContent = (req, res) => {
 
+    let content = {};
+    content = req.body;
+    content['image'] = req.file;
 
-
-url = __dirname + '/../../../uploads/';
-exports.createThumbnail = async (req, res) => {
-
-    //이미지를 붙이는 작업
-    // let img3 = await gm(url + 'test1.jpg')
-    //     .append(url + 'test2.jpg')
-    //     .thumb(400, 400, url + 'test3.jpg', 100, (err) => {
-    //         if (err) {
-    //             console.log('err: ' + err);
-    //             res.status(404);
-    //             res.json({
-    //                 'msg': err
-    //             });
-    //         }
-    //     });
-
-    res.status(200);
+    res.status(201);
     res.json({
-        'msg': 'success'
+        'msg': 'success',
+        'content': content
     });
-}
+};
