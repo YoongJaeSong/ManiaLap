@@ -5,6 +5,13 @@ const swaggerDocument = require('./swagger');
 
 const app = express();
 
+// cors를 해결하기 위한 미들웨어
+app.use('/', (req, res, next)=>{
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
+    next();
+});
+
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 log = (req, res, next)=>{
