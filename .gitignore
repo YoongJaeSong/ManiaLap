@@ -97,4 +97,7 @@ uploads/**
 # .idea directory
 .idea/
 
+# security key
+key.json
+
 # End of https://www.gitignore.io/api/node
