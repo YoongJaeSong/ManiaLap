@@ -56,7 +56,7 @@ module.exports = function (sequelize, DataTypes) {
             type: DataTypes.INTEGER(1),
             allowNull: false
         },
-        desginer: {
+        designer: {
             type: DataTypes.INTEGER(1),
             allowNull: false
         }
