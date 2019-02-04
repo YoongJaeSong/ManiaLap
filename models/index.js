@@ -36,12 +36,17 @@ Object.keys(db).forEach(modelName => {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.User = require('./users')(sequelize, Sequelize);
-db.Story = require('./stories')(sequelize, Sequelize);
-db.Section = require('./sections')(sequelize, Sequelize);
-db.Content = require('./contents')(sequelize, Sequelize);
-db.Hashtag = require('./hashtags')(sequelize, Sequelize);
-db.Story_Hashtag = require('./story_hashtags')(sequelize, Sequelize);
+
+db.user = require('./users')(sequelize, Sequelize);
+db.story = require('./stories')(sequelize, Sequelize);
+db.section = require('./sections')(sequelize, Sequelize);
+db.content = require('./contents')(sequelize, Sequelize);
+db.hashtag = require('./hashtags')(sequelize, Sequelize);
+db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
+db.contentComments=require('./content_comments')(sequelize, Sequelize);
+db.storyComments = require('./story_comments')(sequelize, Sequelize);
+db.userFlowDesigners = require('./user_flow_designers')(sequelize, Sequelize);
+db.userFlowStories = require('./user_flow_stories')(sequelize, Sequelize);
 
 module.exports = db;
 
