@@ -7,6 +7,7 @@ const key = require('./key');
 const app = express();
 
 app.use(bodyParser.urlencoded({extend: true}));
+app.use(bodyParser.json());
 app.use(session({
     secret: key.sessionKey,
     resave: false,
@@ -19,7 +20,6 @@ app.use('/', (req, res, next)=>{
     res.header("Access-Control-Allow-Headers", "X-Requested-Width");
     next();
 });
-
 app.use('/', log = (req, res, next)=>{
     let method = req.method;
     let url = __dirname + req.url;
