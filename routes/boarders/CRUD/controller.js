@@ -1,19 +1,20 @@
 const multer = require('multer');
 const path = require('path');
-const gm = require('gm');
+const {Story, StoryHashtags} = require('../../../models/index');
+
 
 // imagae 저장시 어디에 저장할지 정하는 코드
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // 서버에서 실행할 때 경로를 제대로 잡지 못해 절대경로로 잡아줬다.
-        // 수정이 필요한 부분
-        cb(null, __dirname + '/../../../uploads/');
+        if(file != null)
+            cb(null, __dirname + '/../../../uploads/');
     },
     filename: (req, file, cb) => {
-        const extension = path.extname(file.originalname);
-        const basename = path.basename(file.originalname, extension);
-        // 정책과 DB가 설계되면 이미지 이름 변경해야 한다.
-        cb(null, basename + '-' + Date.now() + extension);
+        if(file != null) {
+            const extension = path.extname(file.originalname);
+            const basename = path.basename(file.originalname, extension);
+            cb(null, basename + '-' + Date.now() + extension);
+        }
     }
 
 });
@@ -30,21 +31,49 @@ const upload = multer({
 let uploads = exports.upload = upload.single('image');
 
 // image uploads 요청
-exports.createStroy = (req, res) => {
-
+exports.createStroy = async (req, res) => {
+    // token에서 user_id를 받는다.
+    const userId = 3;
     let story = {};
+    let hashtags = [];
+
     story = req.body;
-    story['image'] = req.file;
+    story['userId'] = userId;
+    if(req.file != null)
+        story['image_url'] = req.file.filename;
+
+    // result: create작업 후 생성된 객체를 담는 변수
+    let result = await Story.create(story);
+
+    /*
+        result.dataValues.id: 생성된 객체에서 작업으로 생성된 id값을 의미
+     */
+    for (i in story.hashtagId) {
+        let obj = {}
+        obj.storyId = result.dataValues.id;
+        obj.hashtagId = parseInt(story.hashtagId[i]);
+
+        hashtags.push(obj);
+    }
+
+    for (i in hashtags) {
+        StoryHashtags.create(hashtags[i]);
+    }
 
     res.status(201);
     res.json({
-        'msg': 'success',
-        'story': story
+        'msg': 'success'
     });
 };
 
 exports.createContent = (req, res) => {
+    // token으로 user_id값을 받는다.
+    let userId = 3;
+    let storyId = 20;
 
+    /*
+        req.body에 담긴 데이터:   
+    */
     let content = {};
     content = req.body;
     content['image'] = req.file;
