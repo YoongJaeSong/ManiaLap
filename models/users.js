@@ -59,7 +59,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     designer: {
       type: DataTypes.INTEGER(1),
-      allowNull: false
+      allowNull: false,
+      defaultValue: '0'
     }
   }, {
     tableName: 'users'

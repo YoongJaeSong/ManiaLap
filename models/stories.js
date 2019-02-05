@@ -21,6 +21,11 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       unique: true
     },
+    private_status: {
+      type: DataTypes.INTEGER(1),
+      allowNull: false,
+      defaultValue: '0'
+    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
