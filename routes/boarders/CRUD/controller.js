@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
 
 });
 
+
 // image의 제약을 할 수 있는 코드
 // 현재는 아무것도 없다.
 const upload = multer({
@@ -27,23 +28,36 @@ const upload = multer({
     limits: {}
 });
 
+
 // upload.single -> 파일 한개만
 // upload.array -> 여러개의 파일을 받을 수 있다.
-let uploads = exports.upload = upload.single('image');
+exports.upload = upload.single('image');
+
 
 /*
-    upload과정에서 error가 발생하면 업로드된 image를 다시 삭제하는 방식
+    story등록 작업 중 error가 발생하면 업로드된 image를 다시 삭제하는 방식
     try/catch문을 활용해 처리했습니다.
+
+    해야할 것
+     (1) 이미지 사이즈 제한을 어떻게 할 것인지
 */
 exports.createStroy = async (req, res) => {
     // token에서 user_id를 받는다.
     const userId = 3;
     let storyObj = {};
     let hashtags = [];
+    let url = "http://kalin.iptime.org:3100/"
 
+    /*
+        body 내용
+         - required: title(string), description(string), hashtageId(array-string or int)
+         - Not required: image
+    */
     storyObj = req.body;
     storyObj['user_id'] = userId;
-    storyObj['image_url'] = req.file.filename;
+    if (req.file != null) {
+        storyObj['image_url'] = url + req.file.filename;
+    }
 
     try {
         // result: create작업 후 생성된 객체를 담는 변수
@@ -66,8 +80,9 @@ exports.createStroy = async (req, res) => {
         });
     }
     catch (err) {
-        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e)=>{
-            if(e) {
+        // 방금 업로드된 파일을 remove하는 작업
+        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
+            if (e) {
                 res.status(400);
                 res.send(e);
             }
@@ -78,10 +93,16 @@ exports.createStroy = async (req, res) => {
     }
 };
 
+
+/*
+    해야 할 것
+     (1) insert 작업이 정상 수행을 하지만 결과가 없을 때 catch로 넘겨주는 작업
+*/
 exports.createContent = async (req, res) => {
     // token으로 user_id값을 받는다.
     let userId = 3;
-    let storyId = 1;
+    let storyId = 6;
+    let url = "http://kalin.iptime.org:3100/"
 
     /*
         req.body에 담긴 데이터
@@ -89,28 +110,29 @@ exports.createContent = async (req, res) => {
     */
     let contentObj = {};
     contentObj = req.body;
-    contentObj['image_url'] = req.file.filename;
     contentObj['user_id'] = userId;
-    contentObj['story_id'] = storyId;
+    contentObj['story_id'] = req.params.storyId;
 
 
     try {
+        // image_url은 필수 데이터 이기 때문
+        contentObj['image_url'] = url + req.file.filename;
+
         await content.create(contentObj);
 
         res.status(201);
         res.json({
-            'msg': 'success',
-            'content': content
+            'msg': 'success'
         });
-    } catch (e) {
-        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e)=>{
-            if(e) {
+    } catch (err) {
+        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
+            if (e) {
                 res.status(400);
                 res.send(e);
             }
         });
 
         res.status(400);
-        res.send(err.errors[0].message);
+        res.send(err.errors);
     }
 };
