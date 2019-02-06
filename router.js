@@ -1,7 +1,7 @@
 const express = require('express');
 const {createStroy, upload, createContent, cancelImage} = require('./routes/boarders/CRUD/controller');
 const {getStories, getStory, getContent} = require('./routes/boarders/util');
-const {checkSession, loginApi, test} = require('./routes/temp');
+const {checkSession, loginApi} = require('./routes/temp');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger');
 
@@ -24,9 +24,5 @@ router.get('/stories/:storyId', getStory);
 // content
 router.get('/stories/:storyId/contents/:contentId', getContent)
 router.post('/stories/:storyId/contents', upload, createContent);
-
-
-// sequelize test를 위한 api
-router.post('/test', test);
 
 module.exports = router;
