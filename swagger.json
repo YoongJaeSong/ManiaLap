@@ -1,10 +1,10 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "api 문서",
+    "description": " [변경 사항] - 2019/02/06\n 1. post /contents -> /stories/{storyId}/contents로 변경되었습니다.\n\n 2. 기존의 '_'가 들어간 변수명을 변경했습니다.\n \t - post /stories\n (1) user_id-제거\n (2) story_title와 story_description-> title, description으로 변경, hashtagId추가\n 단, swagger bug로 인해 해당 api는 postman으로 테스트 해주세요.\n\n \t - get /stories/{storyId}\n  (1) 기존의 {story_id}->{storyId}로 변경\n\n \t - get /stories/{sotryId}/contents/{contentId}\n  (1) {content_id}->{contentId}로 변경.\n\n 3. Terms of service를 클릭하면 저의 slack으로 연결되기 때문에 여길 통해서 or 카카오톡으로 궁굼한것 문의 사항들을 물어보시면 됩니다. ",
     "version": "1.0.0",
     "title": "Project_mania",
-    "termsOfService": "http://kalin.iptime.org:3100",
+    "termsOfService": "https://sejongduck.slack.com/messages/DD8VA56BD/convo/CD3D3F41E-1543895986.000500/",
     "contact": {
       "name": "YoonJae Song"
     }
@@ -14,7 +14,11 @@
   "tags": [
     {
       "name": "story",
-      "description": "Everything about your Stories"
+      "description": "story작업에 대한 api"
+    },
+    {
+      "name": "content",
+      "description": "content작업에 대한 api"
     }
   ],
   "schemes": [
@@ -26,9 +30,8 @@
         "tags": [
           "story"
         ],
-        "summary": "메인화면",
+        "summary": "story list를 건네주는 api",
         "description": "",
-        "operationId": "addPet",
         "produces": [
           "application/json"
         ],
@@ -36,8 +39,8 @@
           {
             "name": "page",
             "in": "query",
-            "description": "여러개의 story가 있는 경우 paging요청으로 추가적으로 story를 요청하기 위해 필요",
-            "required": true,
+            "description": "default - 1 입니다",
+            "required": false,
             "type": "integer"
           }
         ],
@@ -47,6 +50,9 @@
             "schema": {
               "type": "string"
             }
+          },
+          "503": {
+            "description": "DB error"
           }
         }
       },
@@ -54,7 +60,7 @@
         "tags": [
           "story"
         ],
-        "summary": "Create story",
+        "summary": "story 등록 api - Dug로 인해 해당 api는 test가 안됩니다",
         "description": "",
         "operationId": "CreateStroy",
         "consumes": [
@@ -66,21 +72,27 @@
         "parameters": [
           {
             "in": "formData",
-            "name": "user_id",
-            "required": true,
-            "type": "integer"
+            "name": "hashtagId",
+            "type": "array",
+            "collectionFormat": "multi",
+            "items": {
+              "type": "string"
+            },
+            "description": "배열로 안 보내져서 테스트 못합니다. postman으로 해주세요"
           },
           {
             "in": "formData",
-            "name": "story_title",
+            "name": "title",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "제목"
           },
           {
             "in": "formData",
-            "name": "story_decription",
+            "name": "decription",
             "required": true,
-            "type": "string"
+            "type": "string",
+            "description": "story 설명"
           },
           {
             "in": "formData",
@@ -92,24 +104,36 @@
         "responses": {
           "201": {
             "description": "success"
+          },
+          "400": {
+            "description": "File remove error"
+          },
+          "503": {
+            "description": "DB error"
           }
         }
       }
     },
-    "/stories/{story_id}": {
+    "/stories/{storyId}": {
       "get": {
         "tags": [
           "story"
         ],
-        "summary": "view contents and secction in story",
+        "summary": "해당 스토리의 section과 content들을 넘겨주는 api",
         "description": "",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
+            "in": "query",
+            "name": "page",
+            "type": "integer",
+            "required": false
+          },
+          {
             "in": "path",
-            "name": "story_id",
+            "name": "storyId",
             "type": "integer",
             "required": true,
             "description": "to confirm what the story"
@@ -129,16 +153,20 @@
             "examples": {
               "msg": "success"
             }
-          }
+          },
+          "503": {
+            "description": "DB error"
+          },
+          "null": null
         }
       }
     },
-    "/stories/{story_id}/contents/{content_id}": {
+    "/stories/{storyId}/contents/{contentId}": {
       "get": {
         "tags": [
           "content"
         ],
-        "summary": "view the content",
+        "summary": "contentId에 해당되는 content를 보여주는 api",
         "description": "",
         "produces": [
           "application/json"
@@ -146,25 +174,25 @@
         "parameters": [
           {
             "in": "path",
-            "name": "story_id",
+            "name": "storyId",
             "type": "integer",
             "required": true
           },
           {
             "in": "path",
-            "name": "content_id",
+            "name": "contentId",
             "type": "integer",
             "required": true,
             "description": "어떤 content인지 확인하기 위해서 필요"
           }
         ],
         "responses": {
-          "200":{
+          "200": {
             "description": "successful to get the content",
             "schema": {
               "type": "string",
               "properties": {
-                "msg":{
+                "msg": {
                   "type": "string"
                 }
               }
@@ -172,14 +200,19 @@
             "examples": {
               "msg": "success"
             }
+          },
+          "503": {
+            "description": "DB error"
           }
         }
       }
     },
-    "/content":{
-      "post":{
-        "tags": ["content"],
-        "summary": "Create content",
+    "/stories/{storyId}/contents": {
+      "post": {
+        "tags": [
+          "content"
+        ],
+        "summary": "content 등록 api",
         "description": "",
         "consumes": [
           "multipart/form-data"
@@ -189,19 +222,26 @@
         ],
         "parameters": [
           {
+            "in": "path",
+            "name": "storyId",
+            "type": "integer",
+            "required": true
+          },
+          {
             "in": "formData",
             "name": "title",
             "type": "string",
             "required": true,
-            "description": "content title"
+            "description": "content 제목"
           },
           {
             "in": "formData",
             "name": "description",
             "type": "string",
-            "required": true,
-            "description": "content description"
-          },{
+            "required": false,
+            "description": "content 설명"
+          },
+          {
             "in": "formData",
             "name": "image",
             "type": "file",
@@ -210,7 +250,7 @@
           }
         ],
         "responses": {
-          "201":{
+          "201": {
             "description": "successful to create the content",
             "schema": {
               "type": "string",
@@ -223,6 +263,12 @@
             "examples": {
               "msg": "success"
             }
+          },
+          "400": {
+            "description": "File remove error"
+          },
+          "503": {
+            "description": "DB error"
           }
         }
       }

@@ -1,30 +1,30 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('story_hashtags', {
+  return sequelize.define('user_follow_designers', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    story_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'users',
         key: 'id'
       }
     },
-    hashtag_id: {
+    designer_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'hashtags',
+        model: 'users',
         key: 'id'
       }
     }
   }, {
-    tableName: 'story_hashtags'
+    tableName: 'user_follow_designers'
   });
 };

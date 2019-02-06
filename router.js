@@ -1,11 +1,9 @@
 const express = require('express');
-const {createStroy, upload, createContent} = require('./routes/boarders/CRUD/controller');
-const {stories, story, content} = require('./routes/boarders/util');
+const {createStroy, upload, createContent, cancelImage} = require('./routes/boarders/CRUD/controller');
+const {getStories, getStory, getContent} = require('./routes/boarders/util');
 const {checkSession, loginApi} = require('./routes/temp');
-const {read, create, update} = require('./routes/boarders/CRUD/database');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger');
-const key = require('./key');
 
 const router = express.Router();
 
@@ -18,19 +16,13 @@ router.get('/swagger-ui', checkSession);
 router.use('/swagger-ui', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // story api
-router.get('/stories', stories);
-router.post('/stories', upload, createStroy);
-router.get('/stories/:story_id', story);
+router.get('/stories', getStories);
+router.post('/stories',upload, createStroy);
+router.get('/stories/:storyId', getStory);
 
 
 // content
-router.get('/stories/:story_id/contents/:content_id', content)
-router.post('/content', upload, createContent);
-
-
-// sequelize test를 위한 api
-router.get('/test', read)
-    .post('/test', create)
-    .put('/test', update);
+router.get('/stories/:storyId/contents/:contentId', getContent)
+router.post('/stories/:storyId/contents', upload, createContent);
 
 module.exports = router;

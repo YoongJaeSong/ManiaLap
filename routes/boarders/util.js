@@ -1,74 +1,125 @@
-// thumbnail 내려주는 api
-exports.stories = (req, res) => {
-    // DB작업으로 story의 대표 이미지들의 url주소를 가져오는 곳
-    let story_id = [1, 2];
-    let represent_image = [
-        "kalin.iptime.org:3100/image.jpg",
-        "kalin.iptime.org:3100/sejong.png"
-    ];
+const {story, content} = require('../../models/index');
 
-    let stories = [];
-    for (let i = 0; i < story_id.length; i++) {
-        let obj = {};
-        obj['story_id'] = story_id[i]
-        obj['represent_image'] = represent_image[i];
 
-        stories.push(obj);
+/*
+    [GET] /stories
+ */
+exports.getStories = async (req, res) => {
+
+    // 이전 page에서 해당 page로 접근할 때 user_id값을 가지고 넘어온다.
+    let userId = 3;
+    let page = 1;
+    if (req.query.page != null)
+        page = req.query.page;
+
+    let options = {
+        attributes: ["id", "image_url"],
+        where: {user_id: userId},
+        limit: 4,
+        offset: (page - 1) * 4,
+        order: [['id', 'desc']]
+    };
+
+
+    try {
+        let storyArr = await story.findAll(options);
+
+        let stories = [];
+        for (let i in storyArr) {
+            stories.push(storyArr[i].dataValues);
+        }
+
+        res.status(200);
+        res.json({
+            "msg": 'success',
+            "stories": stories
+        });
+    } catch (err) {
+        res.status(503);
+        res.json({
+            "msg": "DB error occurred",
+            "error": err.errors[0].message
+        });
     }
-
-    res.status(200);
-    res.json({
-        "msg": 'success',
-        "stories": stories
-    });
-}
-
-// 각 board의 이미지를 내려주는 기능
-exports.story = async (req, res) => {
-
-    let story_id = req.params.story_id;
-
-    // DB작업을 하는 곳 해당 story에 대한 section, conten를 가져온다
-    // 사진, section-이미지들만, content
-    let content_id = [1, 2];
-    let content_image = [
-        "kalin.iptime.org:3100/image.jpg",
-        "kalin.iptime.org:3100/sejong.png"
-    ]
-
-    let story = [];
-    for (let i = 0; i < content_id.length; i++) {
-        let obj = {};
-        obj['id'] = content_id[i];
-        obj['image_url'] = content_image[i];
-
-        story.push(obj);
-    }
-
-    res.status(200);
-    res.json({
-        'msg': 'success',
-        'story': story
-    });
 };
 
-exports.content = (req, res) => {
-    let content_id = req.params.content_id;
 
-    // DB작업을 하는 곳 해당 story에 대한 section, conten를 가져온다
-    // 사진, section-이미지들만, content
-    let id = 1;
-    let image = "kalin.iptime.org:3100/image.jpg";
-    let content = {};
+/*
+    [GET] /stories/:storyId
 
-    content['id'] = id;
-    content['image'] = image;
+    해야 할 일
+     (1) section에 대한 처리
+*/
+exports.getStory = async (req, res) => {
+
+    let userId = 3;
+    let storyId = req.params.storyId;
+    let page = 1;
+    if(req.query.page != null){
+        page = req.query.page;
+    }
+    let option = {
+        attributes: ["id", "image_url"],
+        where: {story_id: storyId},
+        limit: 4,
+        offset: (page - 1) * 4,
+        order: [['id', 'desc']]
+    };
+
+    try {
+        let result = await content.findAll(option);
+
+        let contents = [];
+        for (let i in result) {
+            contents.push(result[i].dataValues);
+        }
+
+        res.status(200);
+        res.json({
+            'msg': 'success',
+            'contents': contents
+        });
+    } catch (err) {
+        res.status(503);
+        res.json({
+            "msg": "DB error occurred",
+            "error": err.errors[0].message
+        });
+    }
+};
 
 
-    res.status(200);
-    res.json({
-        'msg': 'success',
-        'content': content
-    });
-}
+/*
+    [GET] /stories/:storyId/contents/:contentId
+
+    해야 할 일
+     (1) section에 대한 처리
+     (2) query 결과물이 없을 경우에 대한 error처리가 미흡
+ */
+exports.getContent =async (req, res) => {
+    // token으로 가져올 데이터
+    let userId = 3;
+    let contentId = req.params.contentId;
+    let storyId = req.params.storyId;
+    let option = {
+        attributes: ['title', 'description', 'image_url'],
+        where: {id: contentId, user_id: userId, story_id: storyId}
+    };
+
+    try {
+        let result = await content.find(option);
+
+        res.status(200);
+        res.json({
+            'msg': 'success',
+            'content': result.dataValues
+        });
+    } catch (err) {
+        res.status(503);
+        res.json({
+            "msg": "DB error occurred",
+            "error": err.errors
+        });
+    }
+};
 
