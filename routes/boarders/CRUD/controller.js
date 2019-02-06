@@ -81,15 +81,23 @@ exports.createStroy = async (req, res) => {
     }
     catch (err) {
         // 방금 업로드된 파일을 remove하는 작업
-        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
-            if (e) {
-                res.status(400);
-                res.send(e);
-            }
-        });
+        if(req.file != null) {
+            fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
+                if (e) {
+                    res.status(400);
+                    res.json({
+                        "msg": "File remove error",
+                        "error": e
+                    });
+                }
+            });
+        }
 
-        res.status(400);
-        res.send(err.errors[0].message);
+        res.status(503);
+        res.send({
+            "msg": "DB error occurred",
+            "error": err.errors[0].message
+        });
     }
 };
 
@@ -116,7 +124,9 @@ exports.createContent = async (req, res) => {
 
     try {
         // image_url은 필수 데이터 이기 때문
-        contentObj['image_url'] = url + req.file.filename;
+        if(req.file != null) {
+            contentObj['image_url'] = url + req.file.filename;
+        }
 
         await content.create(contentObj);
 
@@ -125,14 +135,22 @@ exports.createContent = async (req, res) => {
             'msg': 'success'
         });
     } catch (err) {
-        fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
-            if (e) {
-                res.status(400);
-                res.send(e);
-            }
-        });
+        if(req.file != null) {
+            fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
+                if (e) {
+                    res.status(400);
+                    res.json({
+                        "msg": "File remove error",
+                        "error": e
+                    });
+                }
+            });
+        }
 
-        res.status(400);
-        res.send(err.errors);
+        res.status(503);
+        res.send({
+            "msg": "DB error occurred",
+            "error": err.errors[0].message
+        });
     }
 };

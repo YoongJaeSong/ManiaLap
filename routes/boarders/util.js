@@ -87,14 +87,16 @@ exports.getStory = async (req, res) => {
 
     해야 할 일
      (1) section에 대한 처리
+     (2) query 결과물이 없을 경우에 대한 error처리가 미흡
  */
 exports.getContent =async (req, res) => {
     // token으로 가져올 데이터
     let userId = 3;
-    let id = req.params.contentId;
+    let contentId = req.params.contentId;
+    let storyId = req.params.storyId;
     let option = {
         attributes: ['title', 'description', 'image_url'],
-        where: {id: id, user_id: userId}
+        where: {id: contentId, user_id: userId, story_id: storyId}
     };
 
     try {
@@ -109,7 +111,7 @@ exports.getContent =async (req, res) => {
         res.status(503);
         res.json({
             "msg": "DB error occurred",
-            "error": err.errors[0].message
+            "error": err.errors
         });
     }
 };
