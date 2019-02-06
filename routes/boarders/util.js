@@ -54,9 +54,16 @@ exports.getStory = async (req, res) => {
 
     let userId = 3;
     let storyId = req.params.storyId;
+    let page = 1;
+    if(req.query.page != null){
+        page = req.query.page;
+    }
     let option = {
         attributes: ["id", "image_url"],
-        where: {story_id: storyId}
+        where: {story_id: storyId},
+        limit: 4,
+        offset: (page - 1) * 4,
+        order: [['id', 'desc']]
     };
 
     try {

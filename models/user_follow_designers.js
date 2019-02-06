@@ -1,14 +1,14 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user_flow_stories', {
+  return sequelize.define('user_follow_designers', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    users_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -16,15 +16,15 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    stories_id: {
+    designer_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'users',
         key: 'id'
       }
     }
   }, {
-    tableName: 'user_flow_stories'
+    tableName: 'user_follow_designers'
   });
 };

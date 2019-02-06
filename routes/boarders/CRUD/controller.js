@@ -59,6 +59,7 @@ exports.createStroy = async (req, res) => {
         storyObj['image_url'] = url + req.file.filename;
     }
 
+
     try {
         // result: create작업 후 생성된 객체를 담는 변수
         let result = await story.create(storyObj);
@@ -68,7 +69,7 @@ exports.createStroy = async (req, res) => {
             기존의 문자를 숫자로 바꾸는 작업을 제거 문자열로 해도 정상 작동
         */
         for (i in storyObj.hashtagId) {
-            storyHashtags.create({
+            await storyHashtags.create({
                 story_id: result.dataValues.id,
                 hashtag_id: storyObj.hashtagId[i]
             });
@@ -81,7 +82,7 @@ exports.createStroy = async (req, res) => {
     }
     catch (err) {
         // 방금 업로드된 파일을 remove하는 작업
-        if(req.file != null) {
+        if (req.file != null) {
             fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
                 if (e) {
                     res.status(400);
@@ -94,7 +95,7 @@ exports.createStroy = async (req, res) => {
         }
 
         res.status(503);
-        res.send({
+        res.json({
             "msg": "DB error occurred",
             "error": err.errors[0].message
         });
@@ -124,7 +125,7 @@ exports.createContent = async (req, res) => {
 
     try {
         // image_url은 필수 데이터 이기 때문
-        if(req.file != null) {
+        if (req.file != null) {
             contentObj['image_url'] = url + req.file.filename;
         }
 
@@ -135,7 +136,7 @@ exports.createContent = async (req, res) => {
             'msg': 'success'
         });
     } catch (err) {
-        if(req.file != null) {
+        if (req.file != null) {
             fs.unlink(__dirname + "/../../../uploads/" + req.file.filename, (e) => {
                 if (e) {
                     res.status(400);
@@ -148,7 +149,7 @@ exports.createContent = async (req, res) => {
         }
 
         res.status(503);
-        res.send({
+        res.json({
             "msg": "DB error occurred",
             "error": err.errors[0].message
         });

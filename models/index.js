@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 // config.json을 통해서 DB정보를 확인 및 접속하기 위한 데이터들이 담겨져 있다.
-const config = require(__dirname + '/../config/config.json')[env];
+const config = require('../config/config.json')[env];
 const db = {};
 
 let sequelize;
@@ -45,8 +45,8 @@ db.hashtag = require('./hashtags')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.contentComments=require('./content_comments')(sequelize, Sequelize);
 db.storyComments = require('./story_comments')(sequelize, Sequelize);
-db.userFlowDesigners = require('./user_flow_designers')(sequelize, Sequelize);
-db.userFlowStories = require('./user_flow_stories')(sequelize, Sequelize);
+db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
+db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
 
 module.exports = db;
 

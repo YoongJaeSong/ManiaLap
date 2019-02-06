@@ -10,18 +10,18 @@ module.exports = function(sequelize, DataTypes) {
     },
     comment: {
       type: DataTypes.STRING(45),
-      allowNull: true
+      allowNull: false
     },
     created_at: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
     updated_at: {
       type: DataTypes.DATE,
       allowNull: true
     },
-    user_id: {
+    writer_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'Contents',
+        model: 'contents',
         key: 'id'
       }
     }
