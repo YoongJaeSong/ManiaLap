@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": "user1234",
+    "password": "1234",
     "database": "test_project",
-    "host": "127.0.0.1",
+    "host": "kalin.iptime.org:3100",
     "dialect": "mysql",
     "define": {
       "timestamps": false
