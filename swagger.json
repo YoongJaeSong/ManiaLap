@@ -156,8 +156,7 @@
           },
           "503": {
             "description": "DB error"
-          },
-          "null": null
+          }
         }
       }
     },

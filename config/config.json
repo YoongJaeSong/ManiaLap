@@ -1,9 +1,9 @@
 {
   "development": {
     "username": "root",
-    "password": "1234",
+    "password": "user1234",
     "database": "test_project",
-    "host": "kalin.iptime.org:3100",
+    "host": "127.0.0.1",
     "dialect": "mysql",
     "define": {
       "timestamps": false
@@ -21,9 +21,13 @@
   },
   "production": {
     "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "password": "1234",
+    "database": "test_project",
+    "host": "kalin.iptime.org",
+    "port": 6101,
+    "dialect": "mysql",
+    "define": {
+      "timestamps": false
+    }
   }
 }

@@ -4,7 +4,7 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 // config.json을 통해서 DB정보를 확인 및 접속하기 위한 데이터들이 담겨져 있다.
-const config = require('../config/config.json')[env];
+const config = require('../../config/config.json')[env];
 const db = {};
 
 let sequelize;
@@ -14,15 +14,14 @@ if (config.use_env_variable) {
     sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-fs
-    .readdirSync(__dirname)
+fs.readdirSync(__dirname + '/tables')
     .filter(file => {
         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
     })
     .forEach(file => {
         // 현재 폴더내에 있는 파일들을 불러오는 작업
         // 이 작업으로 model정의들과 같은 object를 생성한다.
-        const model = sequelize['import'](path.join(__dirname, file));
+        const model = sequelize['import'](path.join(__dirname + '/tables', file));
         db[model.name] = model;
     });
 
@@ -37,16 +36,16 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 
-db.user = require('./users')(sequelize, Sequelize);
-db.story = require('./stories')(sequelize, Sequelize);
-db.section = require('./sections')(sequelize, Sequelize);
-db.content = require('./contents')(sequelize, Sequelize);
-db.hashtag = require('./hashtags')(sequelize, Sequelize);
-db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
-db.contentComments=require('./content_comments')(sequelize, Sequelize);
-db.storyComments = require('./story_comments')(sequelize, Sequelize);
-db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
-db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
+db.user = require('./tables/users')(sequelize, Sequelize);
+db.story = require('./tables/stories')(sequelize, Sequelize);
+db.section = require('./tables/sections')(sequelize, Sequelize);
+db.content = require('./tables/contents')(sequelize, Sequelize);
+db.hashtag = require('./tables/hashtags')(sequelize, Sequelize);
+db.storyHashtags = require('./tables/story_hashtags')(sequelize, Sequelize);
+db.contentComments = require('./tables/content_comments')(sequelize, Sequelize);
+db.storyComments = require('./tables/story_comments')(sequelize, Sequelize);
+db.userFollowDesigners = require('./tables/user_follow_designers')(sequelize, Sequelize);
+db.userFollowStories = require('./tables/user_follow_stories')(sequelize, Sequelize);
 
 module.exports = db;
 
