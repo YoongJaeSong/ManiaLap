@@ -90,6 +90,9 @@ typings/
 # www file in bin directories
 bin/**
 
+# All of files in uploads
+public/uploads/**
+!public/uploads/.keep
 
 # .idea directory
 .idea/
