@@ -12,7 +12,7 @@ exports.createStory = async (req, res, next) => {
     // token에서 user_id를 받는다.
     const userId = 3;
     let storyObj = {};
-    let url = "http://localhost:3100/uploads/";
+    let url = process.env.URL;
 
     /*
         body 내용

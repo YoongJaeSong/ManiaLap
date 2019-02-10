@@ -11,7 +11,7 @@ const {insertContent, selectContent} = require('../models/contents');
 exports.createContent = async (req, res, next) => {
     // token으로 user_id값을 받는다.
     let userId = 3;
-    let url = "http://localhost:3100/uploads/";
+    let url = process.env.URL;
 
     /*
         req.body에 담긴 데이터
