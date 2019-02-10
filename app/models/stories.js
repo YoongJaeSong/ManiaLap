@@ -2,9 +2,7 @@ const {story, content, storyHashtags} = require('./index');
 
 exports.insertStory = async (storyObj) => {
     try {
-        let result = await story.create(storyObj);
-
-        return result.dataValues;
+        return await story.create(storyObj);
     } catch (err) {
         throw err;
     }
@@ -40,8 +38,11 @@ exports.selectStories = async (userId, page) => {
     try {
         let arr = await story.findAll(option);
 
-        if(arr == null){
-            throw new Error("Not Find");
+        if(arr.dataValues == null){
+            let error = new Error("No Query Result");
+            error.status = 400;
+
+            throw error;
         }
 
         for(let i in arr){
@@ -68,7 +69,10 @@ exports.selectStory = async (storyId, userId, page) =>{
         let arr = await content.findAll(option);
 
         if(arr.dataValues == null){
-            throw new Error("Not Find");
+            let error = new Error("No Query Result");
+            error.status = 400;
+
+            throw error;
         }
 
         for(let i in arr){

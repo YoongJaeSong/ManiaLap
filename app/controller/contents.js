@@ -1,9 +1,12 @@
 const fs = require('fs');
+const aysnc = require('async');
 const {insertContent, selectContent} = require('../models/contents');
 
 /*
+    [POST] /stories/:storyId/contents
+
     해야 할 것
-     (1) insert 작업이 정상 수행을 하지만 결과가 없을 때 catch로 넘겨주는 작업
+     (1) error 처리에서 파일 삭제를 마치고 next로 넘어가도록 수정이 필요
 */
 exports.createContent = async (req, res, next) => {
     // token으로 user_id값을 받는다.
@@ -21,39 +24,38 @@ exports.createContent = async (req, res, next) => {
 
 
     try {
-        // image_url은 필수 데이터 이기 때문
-        if(req.file != null) {
+        /*
+            image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
+            바로 error handler로 보낸다.
+         */
+        if (req.file != null) {
             contentObj['image_url'] = url + req.file.filename;
-        }else{
-            throw new Error("No File");
+        } else {
+            let error = new Error("An image file is required. You didn't send an image file");
+            error.status = 400;
+
+            return next(error);
         }
 
-        await insertContent(contentObj);
+        let result = await insertContent(contentObj);
+
+        // 방금 생성된 컨텐츠의 id, image_url를 보내주기 위해 필요한 데이터
+        let content = {};
+        content.id = result.dataValues.id;
+        content.image_url = result.dataValues.image_url;
 
         res.status(201);
         res.json({
-            'msg': 'success'
+            'msg': 'success',
+            'content': content
         });
     } catch (err) {
-        if(req.file != null) {
-            fs.unlink(__dirname + "/../../public/uploads/" + req.file.filename, (e) => {
-                if (e) {
-                    // res.status(400);
-                    // res.json({
-                    //     "msg": "File remove error",
-                    //     "error": e.message
-                    // });
-                    next(e);
-                }
-            });
-        }
-
-        // res.status(503);
-        // res.send({
-        //     "msg": "DB error occurred",
-        //     "error": err.message
-        // });
-        next(err);
+        fs.unlink(req.file.path, (e) => {
+            if (e) {
+                next(e);
+            }
+            next(err);
+        });
     }
 };
 
@@ -65,7 +67,7 @@ exports.createContent = async (req, res, next) => {
      (1) section에 대한 처리
      (2) query 결과물이 없을 경우에 대한 error처리가 미흡
  */
-exports.getContent =async (req, res, next) => {
+exports.getContent = async (req, res, next) => {
     // token으로 가져올 데이터
     let userId = 3;
     let contentId = req.params.contentId;

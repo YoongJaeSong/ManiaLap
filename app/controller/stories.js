@@ -1,6 +1,13 @@
 const fs = require('fs');
 const {insertStory, selectStories, selectStory, insertStoryHashtag} = require('../models/stories');
 
+
+/*
+    [POST] /stories
+
+    해야 할 것
+     (1) transaction 구현
+ */
 exports.createStory = async (req, res, next) => {
     // token에서 user_id를 받는다.
     const userId = 3;
@@ -23,34 +30,34 @@ exports.createStory = async (req, res, next) => {
         let result = await insertStory(storyObj);
 
         // story와 hashtag를 맵피하는 테이블 작업
-        await insertStoryHashtag(result.id, storyObj.hashtagId);
+        await insertStoryHashtag(result.dataValues.id, storyObj.hashtagId);
+
+        let story = {};
+        story.id = result.dataValues.id;
+        story.image_url = result.dataValues.image_url;
 
         res.status(201);
         res.json({
-            'msg': 'success'
+            'msg': 'success',
+            'story': story
         });
     }
     catch (err) {
-        // 방금 업로드된 파일을 remove하는 작업
+        /*
+            방금 업로드된 파일을 remove하는 작업
+
+            대표 이미지가 없는데 error가 발생할 수도 있기 때문에  if-else 추가
+         */
         if (req.file != null) {
-            fs.unlink(__dirname + "/../../public/uploads/" + req.file.filename, (e) => {
+            fs.unlink(req.file.path, (e) => {
                 if (e) {
-                    // res.status(400);
-                    // res.json({
-                    //     "msg": "File remove error",
-                    //     "error": e.message
-                    // });
                     next(e);
                 }
+                next(err);
             });
+        } else {
+            next(err);
         }
-
-        // res.status(503);
-        // res.send({
-        //     "msg": "DB error occurred",
-        //     "error": err.message
-        // });
-        next(err);
     }
 };
 
@@ -73,11 +80,6 @@ exports.getStories = async (req, res, next) => {
             "stories": stories
         });
     } catch (err) {
-        // res.status(503);
-        // res.json({
-        //     "msg": "DB error occurred",
-        //     "error": err.message
-        // });
         next(err);
     }
 };
@@ -94,7 +96,7 @@ exports.getStory = async (req, res, next) => {
     let userId = 3;
     let storyId = req.params.storyId;
     let page = 1;
-    if(req.query.page != null){
+    if (req.query.page != null) {
         page = req.query.page;
     }
 
@@ -107,11 +109,6 @@ exports.getStory = async (req, res, next) => {
             'contents': contents
         });
     } catch (err) {
-        // res.status(503);
-        // res.json({
-        //     "msg": "DB error occurred",
-        //     "error": err.message
-        // });
         next(err);
     }
 };

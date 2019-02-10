@@ -2,7 +2,7 @@ const {content} = require('./index');
 
 exports.insertContent = async (contentObj)=>{
     try {
-        await content.create(contentObj);
+        return await content.create(contentObj);
     } catch (err) {
         throw err;
     }
@@ -19,10 +19,13 @@ exports.selectContent = async (contentId, userId, storyId)=>{
         let result = await content.find(option);
 
         if(result == null){
-            throw new Error("Not Find");
+            let error = new Error("No Query Result");
+            error.status = 400;
+
+            throw error;
         }
 
-        return result.dataValues;
+        return result;
     } catch (err) {
         throw err;
     }
