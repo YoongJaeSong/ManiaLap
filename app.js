@@ -1,10 +1,8 @@
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
-const session = require('express-session');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
-const key = require('./key');
 const router = require('./routes/index');
 const stories = require('./routes/stories');
 require('dotenv').config();
@@ -22,11 +20,6 @@ app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extend: true}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname + '/public')));
-app.use(session({
-    secret: key.sessionKey,
-    resave: false,
-    saveUninitialized: true
-}));
 // cors를 해결하기 위한 미들웨어
 app.use('/', (req, res, next)=>{
     res.header("Access-Control-Allow-Origin", "*");
