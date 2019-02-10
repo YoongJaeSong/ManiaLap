@@ -1,5 +1,4 @@
 const fs = require('fs');
-const aysnc = require('async');
 const {insertContent, selectContent} = require('../models/contents');
 
 /*

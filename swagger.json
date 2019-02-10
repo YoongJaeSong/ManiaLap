@@ -271,6 +271,88 @@
           }
         }
       }
+    },
+
+    "/sotries/{storyId}/sections":{
+      "post": {
+        "tags": ["Later"],
+        "summary": "section 등록 api",
+        "consumes":[
+          "multipart/form-data"
+        ],
+        "produces":[
+          "application/json"
+        ],
+        "parameters":[
+          {
+            "in": "path",
+            "name": "storyId",
+            "type": "integer",
+            "required": true
+          }
+        ],
+        "responses":{
+          "200":{
+            "description": "success",
+            "schema": {
+              "type": "string",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/search":{
+      "get":{
+        "tags": ["Later"],
+        "summary": "검색관련 api",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters":[
+          {
+            "in": "query",
+            "name": "text",
+            "type": "string",
+            "required": true,
+            "description": "검색어"
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "type": "integer",
+            "required": true,
+            "description": "어떤 검색인지 확인하기 위해"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description": "검색 성공",
+            "schema":{
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/news":{
+      "get":{
+        "tags": ["Later"],
+        "summary": "소식에 관련 api",
+        "parameters":[
+        ],
+        "responses":{
+          "200":{
+            "description": "success",
+            "schema":{
+              "type": "string"
+            }
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
