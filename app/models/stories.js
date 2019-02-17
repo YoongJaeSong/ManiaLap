@@ -1,4 +1,4 @@
-const {story, content, storyHashtags} = require('./index');
+const {story, content, storyHashtags} = require('../../models/index');
 
 exports.insertStory = async (storyObj) => {
     try {
@@ -15,6 +15,7 @@ exports.insertStory = async (storyObj) => {
 exports.insertStoryHashtag = async (id, hashtagId)=>{
     try {
         for (i in hashtagId) {
+            console.log("hashtagId: " + hashtagId[i]);
             await storyHashtags.create({
                 story_id: id,
                 hashtag_id: hashtagId[i]

@@ -33,7 +33,10 @@ app.use('/stories', stories);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) =>{
-    next(new Error("Not Find: " + req.URL));
+    let error = new Error("Not Find: " + req.URL);
+    error.status = 404;
+
+    next(error);
 });
 
 
