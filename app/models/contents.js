@@ -1,4 +1,4 @@
-const {content} = require('./index');
+const {content} = require('../../models/index');
 
 exports.insertContent = async (contentObj)=>{
     try {
