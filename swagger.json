@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": " [변경 사항] - 2019/02/06\n 1. post /contents -> /stories/{storyId}/contents로 변경되었습니다.\n\n 2. 기존의 '_'가 들어간 변수명을 변경했습니다.\n \t - post /stories\n (1) user_id-제거\n (2) story_title와 story_description-> title, description으로 변경, hashtagId추가\n 단, swagger bug로 인해 해당 api는 postman으로 테스트 해주세요.\n\n \t - get /stories/{storyId}\n  (1) 기존의 {story_id}->{storyId}로 변경\n\n \t - get /stories/{sotryId}/contents/{contentId}\n  (1) {content_id}->{contentId}로 변경.\n\n 3. Terms of service를 클릭하면 저의 slack으로 연결되기 때문에 여길 통해서 or 카카오톡으로 궁굼한것 문의 사항들을 물어보시면 됩니다. ",
+    "description": "  [변경 사항] - 2019/02/18\n   1. 모든 api 앞에 /api를 추가\n 2. 기존의 api는 화면을 기준으로 잘못 작성해 리소스별로 api를 다시 수정 ",
     "version": "1.0.0",
     "title": "Project_mania",
     "termsOfService": "https://sejongduck.slack.com/messages/DD8VA56BD/convo/CD3D3F41E-1543895986.000500/",
@@ -9,29 +9,81 @@
       "name": "YoonJae Song"
     }
   },
-  "host": "kalin.iptime.org:3100",
+  "host": "localhost:3100",
   "basePath": "/",
   "tags": [
     {
+      "name": "profile",
+      "description": "작가 정보에 대한 api"
+    },
+    {
       "name": "story",
-      "description": "story작업에 대한 api"
+      "description": "story 정보에 대한 api"
+    },
+    {
+      "name": "section",
+      "description": "section 정보에 대한 api"
     },
     {
       "name": "content",
       "description": "content작업에 대한 api"
+    },
+    {
+      "name": "Later",
+      "description": "앞으로 업데이트 될 api입니다"
     }
   ],
   "schemes": [
     "http"
   ],
   "paths": {
-    "/stories": {
+    "/api/profile": {
+      "get": {
+        "tags": [
+          "profile"
+        ],
+        "summary": "본인 or 타인의 프로필에 관한 api",
+        "description": " 프로필의 정보: 작가 활동 명, 소개 글, 프로필 이미지, 스토리 개수, 팔로우 수, 받은 응원의 수 \n desginerId\n - null: 본인의 공간으로 들어왔을 경우 token으로 정보를 가져온다.\n - null 아닌 경우: 받은 id값으로 해당 작가의 프로필 정보를 가져온다. ",
+        "produces": [
+          "application/json"
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "desginerId",
+            "in": "query",
+            "description": "어떤 작가의 공간인지 확인하기 위해",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "profile": {
+                  "$ref": "#/definitions/profile"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stories": {
       "get": {
         "tags": [
           "story"
         ],
         "summary": "story list를 건네주는 api",
-        "description": "",
+        "description": " 스토리 정보: id, 제목, 설명, 대표 이미지\n desginerId\n - null: 본인의 공간으로 들어왔을 경우 token으로 정보를 가져온다.\n - null 아닌 경우: 받은 id값으로 해당 작가의 프로필 정보를 가져온다. ",
         "produces": [
           "application/json"
         ],
@@ -39,7 +91,14 @@
           {
             "name": "page",
             "in": "query",
-            "description": "default - 1 입니다",
+            "description": "default: 1",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "desginerId",
+            "in": "query",
+            "description": "타인의 공간에 들어갔을 때",
             "required": false,
             "type": "integer"
           }
@@ -48,7 +107,18 @@
           "200": {
             "description": "success",
             "schema": {
-              "type": "string"
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "stories": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/story"
+                  }
+                }
+              }
             }
           },
           "503": {
@@ -76,9 +146,19 @@
             "type": "array",
             "collectionFormat": "multi",
             "items": {
+              "type": "integer"
+            },
+            "description": "해쉬태그의 아이디 만약 기존의 없는 해쉬태그일 경우 null로 보낼 것"
+          },
+          {
+            "in": "formData",
+            "name": "hashtagName",
+            "type": "array",
+            "collectionFormat": "multi",
+            "items": {
               "type": "string"
             },
-            "description": "배열로 안 보내져서 테스트 못합니다. postman으로 해주세요"
+            "description": "해쉬태그의 이름 hashtagId와 같은 순서로 보내야 한다"
           },
           {
             "in": "formData",
@@ -103,10 +183,21 @@
         ],
         "responses": {
           "201": {
-            "description": "success"
+            "description": "success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "story": {
+                  "$ref": "#/definitions/story"
+                }
+              }
+            }
           },
           "400": {
-            "description": "File remove error"
+            "description": "error"
           },
           "503": {
             "description": "DB error"
@@ -114,44 +205,38 @@
         }
       }
     },
-    "/stories/{storyId}": {
+    "/api/stories/{storyId}": {
       "get": {
         "tags": [
           "story"
         ],
-        "summary": "해당 스토리의 section과 content들을 넘겨주는 api",
-        "description": "",
+        "summary": "해당 스토리의 정보를 가져오는 api",
+        "description": "스토리 정보: id, 제목, 소개, 대표 이미지",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "in": "query",
-            "name": "page",
-            "type": "integer",
-            "required": false
-          },
-          {
             "in": "path",
             "name": "storyId",
             "type": "integer",
             "required": true,
-            "description": "to confirm what the story"
+            "description": "어떤 스토리인지 확인하기 위해"
           }
         ],
         "responses": {
           "200": {
-            "description": "successful to get the story info",
+            "description": "success",
             "schema": {
-              "type": "string",
+              "type": "object",
               "properties": {
                 "msg": {
                   "type": "string"
+                },
+                "story": {
+                  "$ref": "#/definitions/story"
                 }
               }
-            },
-            "examples": {
-              "msg": "success"
             }
           },
           "503": {
@@ -160,13 +245,56 @@
         }
       }
     },
-    "/stories/{storyId}/contents/{contentId}": {
+    "/api/stories/{storyId}/contents": {
       "get": {
         "tags": [
           "content"
         ],
-        "summary": "contentId에 해당되는 content를 보여주는 api",
-        "description": "",
+        "summary": "컨텐츠에 대한 정보를 가져오는 api",
+        "description": " 정보: id, 썸네일\n sectionId\n - null: section에 속해 있지 않는 content들을 가져온다\n - null X: 아이디에 해당되는 content들을 가져온다. ",
+        "parameters": [
+          {
+            "name": "storyId",
+            "in": "path",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "name": "sectionId",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "default: null"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "contents": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/content"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stories/{storyId}/contents/{contentId}": {
+      "get": {
+        "tags": [
+          "content"
+        ],
+        "summary": "해당 content정보를 가져오는 api",
+        "description": "content정보: id, image URL",
         "produces": [
           "application/json"
         ],
@@ -182,7 +310,7 @@
             "name": "contentId",
             "type": "integer",
             "required": true,
-            "description": "어떤 content인지 확인하기 위해서 필요"
+            "description": "어떤 content인지 확인하기 위해"
           }
         ],
         "responses": {
@@ -193,11 +321,11 @@
               "properties": {
                 "msg": {
                   "type": "string"
+                },
+                "content": {
+                  "$ref": "#/definitions/content"
                 }
               }
-            },
-            "examples": {
-              "msg": "success"
             }
           },
           "503": {
@@ -206,7 +334,7 @@
         }
       }
     },
-    "/stories/{storyId}/contents": {
+    "/api/contents": {
       "post": {
         "tags": [
           "content"
@@ -252,19 +380,19 @@
           "201": {
             "description": "successful to create the content",
             "schema": {
-              "type": "string",
+              "type": "object",
               "properties": {
                 "msg": {
                   "type": "string"
+                },
+                "content": {
+                  "$ref": "#/definitions/content"
                 }
               }
-            },
-            "examples": {
-              "msg": "success"
             }
           },
           "400": {
-            "description": "File remove error"
+            "description": "error"
           },
           "503": {
             "description": "DB error"
@@ -272,33 +400,40 @@
         }
       }
     },
-
-    "/sotries/{storyId}/sections":{
-      "post": {
-        "tags": ["Later"],
-        "summary": "section 등록 api",
-        "consumes":[
-          "multipart/form-data"
+    "/api/sotries/{storyId}/sections": {
+      "get": {
+        "tags": [
+          "section"
         ],
-        "produces":[
-          "application/json"
-        ],
-        "parameters":[
+        "summary": "section에 대한 정보를 가져오는 api",
+        "description": "section정보: id, 제목, content객체",
+        "parameters": [
           {
-            "in": "path",
             "name": "storyId",
+            "in": "path",
             "type": "integer",
-            "required": true
+            "required": true,
+            "description": "어떤 story에서 가져와야 하는지 확인하기 위해"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "type": "integer",
+            "required": false,
+            "description": "default: 1"
           }
         ],
-        "responses":{
-          "200":{
-            "description": "success",
+        "responses": {
+          "200": {
+            "description": "OK",
             "schema": {
-              "type": "string",
+              "type": "object",
               "properties": {
                 "msg": {
                   "type": "string"
+                },
+                "section": {
+                  "$ref": "#/definitions/section"
                 }
               }
             }
@@ -306,13 +441,76 @@
         }
       }
     },
-    "/search":{
-      "get":{
-        "tags": ["Later"],
+    "/api/section": {
+      "post": {
+        "tags": [
+          "section"
+        ],
+        "summary": "section 등록 api",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "storyId",
+            "type": "integer",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "title",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "formData",
+            "name": "contentId",
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "required": false,
+            "description": "선택된 content들에 대한 id 배열"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "section": {
+                  "$ref": "#/definitions/section"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "DB error"
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "tags": [
+          "Later"
+        ],
         "summary": "검색관련 api",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters":[
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
           {
             "in": "query",
             "name": "text",
@@ -328,26 +526,27 @@
             "description": "어떤 검색인지 확인하기 위해"
           }
         ],
-        "responses":{
-          "200":{
+        "responses": {
+          "200": {
             "description": "검색 성공",
-            "schema":{
+            "schema": {
               "type": "string"
             }
           }
         }
       }
     },
-    "/news":{
-      "get":{
-        "tags": ["Later"],
-        "summary": "소식에 관련 api",
-        "parameters":[
+    "/api/news": {
+      "get": {
+        "tags": [
+          "Later"
         ],
-        "responses":{
-          "200":{
+        "summary": "소식에 관련 api",
+        "parameters": [],
+        "responses": {
+          "200": {
             "description": "success",
-            "schema":{
+            "schema": {
               "type": "string"
             }
           }
@@ -375,9 +574,8 @@
     "story": {
       "type": "object",
       "properties": {
-        "user_id": {
-          "type": "integer",
-          "format": "int64"
+        "id": {
+          "type": "integer"
         },
         "title": {
           "type": "string"
@@ -385,11 +583,79 @@
         "description": {
           "type": "string"
         },
-        "hashtags": {
+        "image": {
+          "type": "string"
+        }
+      }
+    },
+    "section": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "contents": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "contentId": {
+                "type": "integer"
+              },
+              "image": {
+                "type": "string",
+                "description": "썸네일"
+              }
+            }
           }
+        }
+      }
+    },
+    "content": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string",
+          "description": "썸네일 or 원본 이미지"
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "desginerName": {
+          "type": "string"
+        },
+        "desginerDescription": {
+          "type": "string"
+        },
+        "profileImage": {
+          "type": "string"
+        },
+        "storyNum": {
+          "type": "integer"
+        },
+        "followNum": {
+          "type": "integer"
+        },
+        "supportNum": {
+          "type": "integer",
+          "description": "받은 응원의 수"
         }
       }
     }
