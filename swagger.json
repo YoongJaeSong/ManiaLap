@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "  [변경 사항] - 2019/02/18\n   1. 모든 api 앞에 /api를 추가\n 2. 기존의 api는 화면을 기준으로 잘못 작성해 리소스별로 api를 다시 수정 ",
+    "description": "  [변경 사항] - 2019/02/17\n   1. 모든 api 앞에 /api를 추가\n 2. 기존의 api는 화면을 기준으로 잘못 작성해 리소스별로 api를 다시 수정 ",
     "version": "1.0.0",
     "title": "Project_mania",
     "termsOfService": "https://sejongduck.slack.com/messages/DD8VA56BD/convo/CD3D3F41E-1543895986.000500/",
@@ -9,7 +9,7 @@
       "name": "YoonJae Song"
     }
   },
-  "host": "kalin.iptime.org:3100",
+  "host": "localhost:3100",
   "basePath": "/",
   "tags": [
     {
@@ -19,10 +19,6 @@
     {
       "name": "story",
       "description": "story 정보에 대한 api"
-    },
-    {
-      "name": "section",
-      "description": "section 정보에 대한 api"
     },
     {
       "name": "content",
@@ -42,8 +38,8 @@
         "tags": [
           "profile"
         ],
-        "summary": "본인 or 타인의 프로필에 관한 api",
-        "description": " 프로필의 정보: 작가 활동 명, 소개 글, 프로필 이미지, 스토리 개수, 팔로우 수, 받은 응원의 수 \n desginerId\n - null: 본인의 공간으로 들어왔을 경우 token으로 정보를 가져온다.\n - null 아닌 경우: 받은 id값으로 해당 작가의 프로필 정보를 가져온다. ",
+        "summary": "user or designer의 프로필에 관한 api",
+        "description": " desginerId\n - 정보: id, 작가명, 소개, 프로필이미지, 스토리 개수, 받은 으원의 수, 팔로우 수\n - 받은 id값으로 해당 작가의 프로필 정보를 가져온다.\n\n userId\n - 정보: id, 이름or닉네임, 프로필 이미지, 남은 응원의 수, 여태껏한 응원의 수, 팔로우한 작가의 정보, 팔로우한 스토리의 정보\n - 받은 id값으로 해당 유저의 프로필 정보를 가져온다. ",
         "produces": [
           "application/json"
         ],
@@ -57,6 +53,13 @@
             "description": "어떤 작가의 공간인지 확인하기 위해",
             "required": false,
             "type": "integer"
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "type": "integer",
+            "description": "어떤 유저인지 확인하기 위해",
+            "required": false
           }
         ],
         "responses": {
@@ -68,8 +71,11 @@
                 "msg": {
                   "type": "string"
                 },
-                "profile": {
-                  "$ref": "#/definitions/profile"
+                "user": {
+                  "$ref": "#/definitions/user"
+                },
+                "designer": {
+                  "$ref": "#/definitions/designer"
                 }
               }
             }
@@ -251,20 +257,13 @@
           "content"
         ],
         "summary": "컨텐츠에 대한 정보를 가져오는 api",
-        "description": " 정보: id, 썸네일\n sectionId\n - null: section에 속해 있지 않는 content들을 가져온다\n - null X: 아이디에 해당되는 content들을 가져온다. ",
+        "description": "정보: id, 썸네일",
         "parameters": [
           {
             "name": "storyId",
             "in": "path",
             "type": "integer",
             "required": true
-          },
-          {
-            "name": "sectionId",
-            "in": "query",
-            "type": "integer",
-            "required": false,
-            "description": "default: null"
           }
         ],
         "responses": {
@@ -400,104 +399,6 @@
         }
       }
     },
-    "/api/sotries/{storyId}/sections": {
-      "get": {
-        "tags": [
-          "section"
-        ],
-        "summary": "section에 대한 정보를 가져오는 api",
-        "description": "section정보: id, 제목, content객체",
-        "parameters": [
-          {
-            "name": "storyId",
-            "in": "path",
-            "type": "integer",
-            "required": true,
-            "description": "어떤 story에서 가져와야 하는지 확인하기 위해"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "type": "integer",
-            "required": false,
-            "description": "default: 1"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "msg": {
-                  "type": "string"
-                },
-                "section": {
-                  "$ref": "#/definitions/section"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/section": {
-      "post": {
-        "tags": [
-          "section"
-        ],
-        "summary": "section 등록 api",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "formData",
-            "name": "storyId",
-            "type": "integer",
-            "required": true
-          },
-          {
-            "in": "formData",
-            "name": "title",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "formData",
-            "name": "contentId",
-            "type": "array",
-            "items": {
-              "type": "integer"
-            },
-            "required": false,
-            "description": "선택된 content들에 대한 id 배열"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "success",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "msg": {
-                  "type": "string"
-                },
-                "section": {
-                  "$ref": "#/definitions/section"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "DB error"
-          }
-        }
-      }
-    },
     "/api/search": {
       "get": {
         "tags": [
@@ -552,6 +453,30 @@
           }
         }
       }
+    },
+    "/api/hashgtags": {
+      "get": {
+        "tags": [
+          "Later"
+        ],
+        "summary": "해시태그 정보를 가져오는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Later"
+        ],
+        "summary": "새로운 해시태그를 등록하는 api",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -588,32 +513,6 @@
         }
       }
     },
-    "section": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "string"
-        },
-        "contents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "contentId": {
-                "type": "integer"
-              },
-              "image": {
-                "type": "string",
-                "description": "썸네일"
-              }
-            }
-          }
-        }
-      }
-    },
     "content": {
       "type": "object",
       "properties": {
@@ -632,30 +531,86 @@
         }
       }
     },
-    "profile": {
+    "user": {
       "type": "object",
       "properties": {
         "id": {
           "type": "integer"
         },
-        "desginerName": {
+        "name": {
           "type": "string"
         },
-        "desginerDescription": {
+        "image": {
           "type": "string"
         },
-        "profileImage": {
+        "supportNum": {
+          "type": "integer",
+          "description": "오늘 남은 응원의 수"
+        },
+        "supportTotal": {
+          "type": "integer",
+          "description": "여태껏 응원한 수"
+        },
+        "followDesigners": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "팔로우한 작가의 id"
+              },
+              "name": {
+                "type": "string",
+                "description": "팔로우한 작가의 이름"
+              }
+            }
+          }
+        },
+        "followStories": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "description": "팔로우한 스토리의 id"
+              },
+              "name": {
+                "type": "string",
+                "description": "팔로우한 스토리의 이름"
+              }
+            }
+          }
+        }
+      }
+    },
+    "designer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "image": {
           "type": "string"
         },
         "storyNum": {
-          "type": "integer"
-        },
-        "followNum": {
-          "type": "integer"
+          "type": "integer",
+          "description": "스토리 개수"
         },
         "supportNum": {
           "type": "integer",
           "description": "받은 응원의 수"
+        },
+        "followNum": {
+          "type": "integer",
+          "description": "팔로우 수"
         }
       }
     }

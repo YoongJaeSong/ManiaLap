@@ -38,8 +38,9 @@ exports.selectStories = async (userId, page) => {
     let result = [];
     try {
         let arr = await story.findAll(option);
-
-        if(arr.dataValues == null){
+        console.log(2);
+        console.log(arr);
+        if(arr == null){
             let error = new Error("No Query Result");
             error.status = 400;
 

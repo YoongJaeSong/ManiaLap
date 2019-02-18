@@ -70,10 +70,10 @@ exports.getStories = async (req, res, next) => {
     let page = 1;
     if (req.query.page != null)
         page = req.query.page;
-
+    console.log(1);
     try {
         let stories = await selectStories(userId, page);
-
+        console.log(stories);
         res.status(200);
         res.json({
             "msg": 'success',
