@@ -73,7 +73,7 @@ exports.getStories = async (req, res, next) => {
 
     try {
         let stories = await selectStories(userId, page);
-
+        console.log(stories);
         res.status(200);
         res.json({
             "msg": 'success',
