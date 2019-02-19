@@ -1,6 +1,6 @@
 const {content} = require('../../models/index');
 
-exports.insertContent = async (contentObj)=>{
+exports.insertContent = async (contentObj) => {
     try {
         return await content.create(contentObj);
     } catch (err) {
@@ -8,17 +8,46 @@ exports.insertContent = async (contentObj)=>{
     }
 };
 
-exports.selectContent = async (contentId, userId, storyId)=>{
+exports.selectContents = async (storyId) => {
+
     let option = {
-        attributes: ['title', 'description', 'image_url'],
-        where: {id: contentId, user_id: userId, story_id: storyId}
+        attributes: ['id', 'title', 'description', 'image_url'],
+        where: {story_id: storyId},
+        order: [['id', 'desc']]
     };
 
-    console.log(`contentId: ${contentId}, userId: ${userId}, storyId: ${storyId}`);
     try {
-        let result = await content.find(option);
+        let arr = await content.findAll(option);
 
-        if(result == null){
+        if (arr == null) {
+            let error = new Error("No Query Result");
+            error.status = 400;
+
+            throw error;
+        }
+
+        let result = [];
+        for (i in arr) {
+            result.push(arr[i].dataValues);
+        }
+
+        return result;
+    } catch (err) {
+        throw(err);
+    }
+
+};
+
+exports.selectContent = async (contentId, storyId) => {
+    let option = {
+        attributes: ['title', 'description', 'image_url'],
+        where: {id: contentId, story_id: storyId}
+    };
+
+    try {
+        let result = await content.findOne(option);
+
+        if (result == null) {
             let error = new Error("No Query Result");
             error.status = 400;
 

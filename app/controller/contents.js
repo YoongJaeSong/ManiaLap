@@ -1,8 +1,8 @@
 const fs = require('fs');
-const {insertContent, selectContent} = require('../models/contents');
+const {insertContent, selectContent, selectContents} = require('../models/contents');
 
 /*
-    [POST] /stories/:storyId/contents
+    [POST] /api/stories/:storyId/contents
 
     해야 할 것
      (1) error 처리에서 파일 삭제를 마치고 next로 넘어가도록 수정이 필요
@@ -60,22 +60,46 @@ exports.createContent = async (req, res, next) => {
 
 
 /*
-    [GET] /stories/:storyId/contents/:contentId
+    [GET] /api/stories/:storyId/contents
 
-    해야 할 일
-     (1) section에 대한 처리
-     (2) query 결과물이 없을 경우에 대한 error처리가 미흡
+    storyId를 가진 스토리에 해당된 content들을 다 가져온다.
+    content 정보: id, 제목, 설명, 이미지
+ */
+exports.getContents = async (req, res, next) =>{
+
+    let storyId = req.params.storyId;
+
+    try {
+        let contents = await selectContents(storyId);
+
+        res.status(200);
+        res.json({
+            'msg': "success",
+            'contents': contents
+        });
+    } catch (err) {
+        next(err);
+    }
+
+};
+
+
+/*
+    [GET] /api/stories/:storyId/contents/:contentId
+
+    contentId의 content의 정보를 가져오는 api
+    content 정보: 제목, 설명, 이미지
+
+    issue
+     (1) 전 화면에서 이미 컨텐츠에 대한 모든 정보를 가지고 있는데 다시 요청을 해야함?
  */
 exports.getContent = async (req, res, next) => {
-    // token으로 가져올 데이터
-    let userId = 3;
+
     let contentId = req.params.contentId;
     let storyId = req.params.storyId;
 
-    console.log(req);
-    console.log(req.params);
     try {
-        let content = await selectContent(contentId, userId, storyId);
+        let content = await selectContent(contentId, storyId);
 
         res.status(200);
         res.json({
