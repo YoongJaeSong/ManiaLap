@@ -62,17 +62,22 @@ exports.createStory = async (req, res, next) => {
 };
 
 /*
-    [GET] /stories
+    [GET] /api/stories?designerId=&page=
+
+    스토리 정보를 객체 list로 가져오는 api
+    스토리 정보: id, 제목, 설명, 대표 이미지
  */
 exports.getStories = async (req, res, next) => {
     // 이전 page에서 해당 page로 접근할 때 user_id값을 가지고 넘어온다.
-    let userId = 3;
+    let designerId = null;
     let page = 1;
+
+    designerId = req.query.designerId;
     if (req.query.page != null)
         page = req.query.page;
 
     try {
-        let stories = await selectStories(userId, page);
+        let stories = await selectStories(designerId, page);
         console.log(stories);
         res.status(200);
         res.json({
@@ -88,25 +93,19 @@ exports.getStories = async (req, res, next) => {
 /*
     [GET] /stories/:storyId
 
-    해야 할 일
-     (1) section에 대한 처리
+    스토리 정보(id, 제목, 설명, 대표 이미지)를 가져오는 api
 */
 exports.getStory = async (req, res, next) => {
 
-    let userId = 3;
     let storyId = req.params.storyId;
-    let page = 1;
-    if (req.query.page != null) {
-        page = req.query.page;
-    }
 
     try {
-        let contents = await selectStory(storyId, userId, page);
+        let story = await selectStory(storyId);
 
         res.status(200);
         res.json({
             'msg': 'success',
-            'contents': contents
+            'story': story
         });
     } catch (err) {
         next(err);

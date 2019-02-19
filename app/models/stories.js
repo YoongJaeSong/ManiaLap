@@ -26,10 +26,14 @@ exports.insertStoryHashtag = async (id, hashtagId)=>{
     }
 };
 
-exports.selectStories = async (userId, page) => {
+/*
+    스토리의 정보를 가져오는 Query
+    스토리 정보: id, 제목, 설명, 대표 이미지
+ */
+exports.selectStories = async (designerId, page) => {
     let option = {
-        attributes: ["id", "image_url"],
-        where: {user_id: userId},
+        attributes: ["id", "title", "description", "image_url"],
+        where: {designers_id: designerId},
         limit: 4,
         offset: (page - 1) * 4,
         order: [['id', 'desc']]
@@ -39,7 +43,8 @@ exports.selectStories = async (userId, page) => {
     try {
         let arr = await story.findAll(option);
 
-        if(arr == null){
+        // 가져온 데이터가 없는 경우
+        if(arr[0] == null){
             let error = new Error("No Query Result");
             error.status = 400;
 
@@ -56,18 +61,19 @@ exports.selectStories = async (userId, page) => {
     }
 };
 
-exports.selectStory = async (storyId, userId, page) =>{
+/*
+    스토리 하나의 정보를 가져오는 api
+    스토리 정보: id, 제목, 설명, 대표 이미지
+ */
+exports.selectStory = async (storyId) =>{
     let option = {
-        attributes: ["id", "image_url"],
-        where: {story_id: storyId, user_id: userId},
-        limit: 4,
-        offset: (page - 1) * 4,
-        order: [['id', 'desc']]
+        attributes: ["id", "title", "description", "image_url"],
+        where: {id: storyId}
     };
 
-    let result = [];
+    let result = {};
     try {
-        let arr = await content.findAll(option);
+        let arr = await story.findOne(option);
 
         if(arr.dataValues == null){
             let error = new Error("No Query Result");
@@ -76,9 +82,7 @@ exports.selectStory = async (storyId, userId, page) =>{
             throw error;
         }
 
-        for(let i in arr){
-            result.push(arr[i].dataValues);
-        }
+        result = arr.dataValues;
 
         return result;
     } catch (err) {
