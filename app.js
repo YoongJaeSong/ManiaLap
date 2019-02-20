@@ -30,7 +30,7 @@ app.use('/', (req, res, next)=>{
 });
 
 app.use('/', router);
-// app.use('/api/profile', profile);
+app.use('/api/profile', profile);
 app.use('/api/stories', stories);
 app.use('/api/contents', contents);
 
