@@ -36,16 +36,16 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 
-db.user = require('./users')(sequelize, Sequelize);
-db.story = require('./stories')(sequelize, Sequelize);
-db.section = require('./sections')(sequelize, Sequelize);
-db.content = require('./contents')(sequelize, Sequelize);
-db.hashtag = require('./hashtags')(sequelize, Sequelize);
+db.users = require('./users')(sequelize, Sequelize);
+db.stories = require('./stories')(sequelize, Sequelize);
+db.contents = require('./contents')(sequelize, Sequelize);
+db.hashtags = require('./hashtags')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
-db.contentComments = require('./content_comments')(sequelize, Sequelize);
-db.storyComments = require('./story_comments')(sequelize, Sequelize);
 db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
 db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
+db.usersDesingersComments = require('./users_designers_comments')(sequelize, Sequelize);
+db.designers = require('./designers')(sequelize, Sequelize);
+db.comments = require('./comments')(sequelize, Sequelize);
 
 module.exports = db;
 
