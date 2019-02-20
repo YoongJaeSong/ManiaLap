@@ -47,6 +47,10 @@ db.usersDesingersComments = require('./users_designers_comments')(sequelize, Seq
 db.designers = require('./designers')(sequelize, Sequelize);
 db.comments = require('./comments')(sequelize, Sequelize);
 
+db.designers.hasMany(db.stories, {foreignKey: 'designers_id'});
+db.users.hasOne(db.designers, {foreignKey: 'users_id', targetKey: 'users_id'});
+db.designers.belongsTo(db.users, {foreignKey: 'users_id', targetKey: 'id'});
+
 module.exports = db;
 
 // model를 만들기위해 먼저 실행해야 하는 명령문
