@@ -105,7 +105,7 @@ exports.createStory = async (req, res, next) => {
     스토리 정보: id, 제목, 설명, 대표 이미지
  */
 exports.getStories = async (req, res, next) => {
-    // 이전 page에서 해당 page로 접근할 때 user_id값을 가지고 넘어온다.
+    // 이전 page에서 해당 page로 접근할 때 designerId값을 가지고 넘어온다.
     let designerId = null;
     let page = 1;
 

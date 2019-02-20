@@ -9,7 +9,7 @@ const {insertContent, selectContent, selectContents} = require('../models/conten
 */
 exports.createContent = async (req, res, next) => {
     // token으로 designerId값을 받는다.
-    let designerId = 1;
+    let designerId = 3;
     let url = process.env.URL;
 
     /*
