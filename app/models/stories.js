@@ -1,8 +1,15 @@
-const {story, content, storyHashtags} = require('../../models/index');
+const {stories, storyHashtags} = require('../../models/index');
 
-exports.insertStory = async (storyObj) => {
+/*
+    story만드는 Query
+
+    transaction 작업을 하기 위해서 transaction을 두번째 인자로 넘겨줘야 한다.
+ */
+exports.insertStory = async (storyObj, transaction) => {
     try {
-        return await story.create(storyObj);
+        let result = await stories.create(storyObj, {transaction});
+
+        return result.dataValues;
     } catch (err) {
         throw err;
     }
@@ -12,19 +19,19 @@ exports.insertStory = async (storyObj) => {
 /*
     기존의 문자를 숫자로 바꾸는 작업을 제거 문자열로 해도 정상 작동
 */
-exports.insertStoryHashtag = async (id, hashtagId)=>{
+exports.insertStoryHashtag = async (id, hashtagId, transaction)=>{
     try {
         for (i in hashtagId) {
-            console.log("hashtagId: " + hashtagId[i]);
             await storyHashtags.create({
                 story_id: id,
                 hashtag_id: hashtagId[i]
-            });
+            }, {transaction});
         }
     } catch (err) {
         throw err;
     }
 };
+
 
 /*
     스토리의 정보를 가져오는 Query
@@ -41,7 +48,7 @@ exports.selectStories = async (designerId, page) => {
 
     let result = [];
     try {
-        let arr = await story.findAll(option);
+        let arr = await stories.findAll(option);
 
         // 가져온 데이터가 없는 경우
         if(arr[0] == null){
@@ -73,7 +80,7 @@ exports.selectStory = async (storyId) =>{
 
     let result = {};
     try {
-        let arr = await story.findOne(option);
+        let arr = await stories.findOne(option);
 
         if(arr.dataValues == null){
             let error = new Error("No Query Result");

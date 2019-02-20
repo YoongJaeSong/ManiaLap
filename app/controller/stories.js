@@ -1,5 +1,7 @@
 const fs = require('fs');
+const {sequelize} = require('../../models/index');
 const {insertStory, selectStories, selectStory, insertStoryHashtag} = require('../models/stories');
+const {insertHashtag} = require('../models/hashtags');
 
 
 /*
@@ -9,9 +11,8 @@ const {insertStory, selectStories, selectStory, insertStoryHashtag} = require('.
      (1) transaction 구현
  */
 exports.createStory = async (req, res, next) => {
-    // token에서 user_id를 받는다.
-    const userId = 3;
-    let storyObj = {};
+    // token에서 designerd를 받는다. req.designerId가 있을 예정
+    const designerId = 3;
     let url = process.env.URL;
 
     /*
@@ -19,22 +20,55 @@ exports.createStory = async (req, res, next) => {
          - required: title(string), description(string), hashtageId(array-string or int)
          - Not required: image
     */
+    let storyObj = {};
     storyObj = req.body;
-    storyObj['user_id'] = userId;
+    storyObj['designers_id'] = designerId;
     if (req.file != null) {
         storyObj['image_url'] = url + req.file.filename;
     }
 
+    /*
+        해시태그 작업
+        (1) 해시태그 id와 이름이 같이 있으면 바로 story_hashtag 매핑테이블에 넣기
+        (2) id가 없는 경우 해시태그 테이블에 만들고 매핑테이블에 넣기
+     */
+    let newHashtag = [];
+    let hashtagId = [];
+    for (i in storyObj.hashtagId) {
+        if (storyObj.hashtagId[i] === '') {
+            newHashtag.push({name: storyObj.hashtagName[i]});
+        } else {
+            hashtagId.push(storyObj.hashtagId[i]);
+        }
+    }
+
+    // get transaction
+    let transaction = await sequelize.transaction();
+
     try {
+
         // result: create작업 후 생성된 객체를 담는 변수
-        let result = await insertStory(storyObj);
+        let result = await insertStory(storyObj, transaction);
+
+        /*
+            새로 등록된 해시태그들의 id값을 기존의 hashtag에 추가한다.
+         */
+        let arr = await insertHashtag(newHashtag, transaction);
+        for(i in arr){
+            hashtagId.push(arr[i]);
+        }
 
         // story와 hashtag를 맵피하는 테이블 작업
-        await insertStoryHashtag(result.dataValues.id, storyObj.hashtagId);
+        await insertStoryHashtag(result.id, hashtagId, transaction);
 
         let story = {};
-        story.id = result.dataValues.id;
-        story.image_url = result.dataValues.image_url;
+        story.id = result.id;
+        story.title = result.title;
+        story.description = result.description;
+        story.image_url = result.image_url;
+        story.hashtagNmae = storyObj.hashtagName;
+
+        await transaction.commit();
 
         res.status(201);
         res.json({
@@ -43,6 +77,9 @@ exports.createStory = async (req, res, next) => {
         });
     }
     catch (err) {
+        // if any errors were occurred, rollback transaction
+        await transaction.rollback();
+
         /*
             방금 업로드된 파일을 remove하는 작업
 
