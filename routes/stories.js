@@ -11,6 +11,5 @@ router.get('/:storyId', getStory);
 
 router.get('/:storyId/contents', getContents);
 router.get('/:storyId/contents/:contentId', getContent);
-router.post('/:storyId/contents', uploads, createContent);
 
 module.exports = router;

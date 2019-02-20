@@ -8,8 +8,8 @@ const {insertContent, selectContent, selectContents} = require('../models/conten
      (1) error 처리에서 파일 삭제를 마치고 next로 넘어가도록 수정이 필요
 */
 exports.createContent = async (req, res, next) => {
-    // token으로 user_id값을 받는다.
-    let userId = 3;
+    // token으로 designerId값을 받는다.
+    let designerId = 1;
     let url = process.env.URL;
 
     /*
@@ -18,7 +18,7 @@ exports.createContent = async (req, res, next) => {
     */
     let contentObj = {};
     contentObj = req.body;
-    contentObj['user_id'] = userId;
+    contentObj['designers_id'] = designerId;
     contentObj['story_id'] = req.params.storyId;
 
 

@@ -1,8 +1,8 @@
-const {content} = require('../../models/index');
+const {contents} = require('../../models/index');
 
 exports.insertContent = async (contentObj) => {
     try {
-        return await content.create(contentObj);
+        return await contents.create(contentObj);
     } catch (err) {
         throw err;
     }
@@ -17,7 +17,7 @@ exports.selectContents = async (storyId) => {
     };
 
     try {
-        let arr = await content.findAll(option);
+        let arr = await contents.findAll(option);
 
         if (arr == null) {
             let error = new Error("No Query Result");
@@ -45,7 +45,7 @@ exports.selectContent = async (contentId, storyId) => {
     };
 
     try {
-        let result = await content.findOne(option);
+        let result = await contents.findOne(option);
 
         if (result == null) {
             let error = new Error("No Query Result");
