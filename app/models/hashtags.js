@@ -24,3 +24,25 @@ exports.insertHashtag = async (hashtagName, transaction)=>{
     }
 
 };
+
+
+/*
+    해시태그를 특정 단어로 검색해 정보를 가져오는 작업
+    해시태그 정보: id, name
+
+    더 좋은 검색구현 찾아 볼 것
+ */
+exports.searchHashtags = async (name) => {
+
+    let option = {
+        attributes: ['id', 'name'],
+        where: {name: {like: `%${name}%`}}
+    };
+
+    try {
+        return await hashtags.findAll(option);
+    } catch (err) {
+        throw err;
+    }
+
+};

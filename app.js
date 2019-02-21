@@ -7,6 +7,7 @@ const router = require('./routes/index');
 const stories = require('./routes/stories');
 const contents = require('./routes/contents');
 const profile = require('./routes/profile');
+const hashtags = require('./routes/hashtags');
 require('dotenv').config();
 
 const app = express();
@@ -33,6 +34,7 @@ app.use('/', router);
 app.use('/api/profile', profile);
 app.use('/api/stories', stories);
 app.use('/api/contents', contents);
+app.use('/api/hashtags', hashtags);
 
 
 // catch 404 and forward to error handler
