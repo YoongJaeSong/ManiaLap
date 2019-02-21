@@ -59,7 +59,7 @@ exports.selectStories = async (designerId, page) => {
         }
 
         for(let i in arr){
-            result.push(arr[i].dataValues);
+            result.push(arr[i]);
         }
 
         return result;
@@ -78,18 +78,15 @@ exports.selectStory = async (storyId) =>{
         where: {id: storyId}
     };
 
-    let result = {};
     try {
-        let arr = await stories.findOne(option);
+        let result = await stories.findOne(option);
 
-        if(arr.dataValues == null){
+        if(result == null){
             let error = new Error("No Query Result");
             error.status = 400;
 
             throw error;
         }
-
-        result = arr.dataValues;
 
         return result;
     } catch (err) {
