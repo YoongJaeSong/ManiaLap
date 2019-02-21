@@ -28,7 +28,7 @@ exports.selectContents = async (storyId) => {
 
         let result = [];
         for (i in arr) {
-            result.push(arr[i].dataValues);
+            result.push(arr[i]);
         }
 
         return result;

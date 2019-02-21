@@ -3,9 +3,6 @@ const {insertContent, selectContent, selectContents} = require('../models/conten
 
 /*
     [POST] /api/stories/:storyId/contents
-
-    해야 할 것
-     (1) error 처리에서 파일 삭제를 마치고 next로 넘어가도록 수정이 필요
 */
 exports.createContent = async (req, res, next) => {
     // token으로 designerId값을 받는다.
@@ -40,8 +37,8 @@ exports.createContent = async (req, res, next) => {
 
         // 방금 생성된 컨텐츠의 id, image_url를 보내주기 위해 필요한 데이터
         let content = {};
-        content.id = result.dataValues.id;
-        content.image_url = result.dataValues.image_url;
+        content.id = result.id;
+        content.image_url = result.image_url;
 
         res.status(201);
         res.json({
