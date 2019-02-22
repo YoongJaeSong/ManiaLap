@@ -21,7 +21,7 @@ exports.createContent = async (req, res, next) => {
         image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
         바로 error handler로 보낸다.
      */
-    if (req.file != null) {
+    if (req.file) {
         contentObj.image_url = url + req.file.filename;
     } else {
         let error = new Error("An image file is required. You didn't send an image file");
