@@ -6,9 +6,6 @@ const {insertHashtag} = require('../models/hashtags');
 
 /*
     [POST] /stories
-
-    해야 할 것
-     (1) transaction 구현
  */
 exports.createStory = async (req, res, next) => {
     // token에서 designerd를 받는다. req.designerId가 있을 예정
@@ -21,52 +18,57 @@ exports.createStory = async (req, res, next) => {
          - Not required: image
     */
     let storyObj = {};
-    storyObj = req.body;
-    storyObj['designers_id'] = designerId;
+    storyObj.title = req.body.title;
+    storyObj.description = req.body.description;
+    storyObj.designers_id = designerId;
     if (req.file != null) {
-        storyObj['image_url'] = url + req.file.filename;
+        storyObj.image_url = url + req.file.filename;
     }
 
     /*
-        해시태그 작업
-        (1) 해시태그 id와 이름이 같이 있으면 바로 story_hashtag 매핑테이블에 넣기
-        (2) id가 없는 경우 해시태그 테이블에 만들고 매핑테이블에 넣기
-     */
-    let newHashtag = [];
-    let hashtagId = [];
-    for (i in storyObj.hashtagId) {
-        if (storyObj.hashtagId[i] === '') {
-            newHashtag.push({name: storyObj.hashtagName[i]});
-        } else {
-            hashtagId.push(storyObj.hashtagId[i]);
+        hashtagId, hashtagName 각각의 배열을 객체로 묶어 배열로 만든다.
+        {
+            id: integer
+            name: string
         }
+     */
+    let flag = 0; // 나중에 insertStory에 들어갈지 안 들어갈지 결정하기 위한 데이터
+    storyObj.hashtags = [];
+    for (let i = 0; i < req.body.hashtagName.length; i++){
+        let obj = {};
+
+        if(!req.body.hashtagId[i]) {flag = 1;}
+
+        obj.id = req.body.hashtagId[i];
+        obj.name = req.body.hashtagName[i];
+
+        storyObj.hashtags.push(obj);
     }
 
     // get transaction
     let transaction = await sequelize.transaction();
 
     try {
-
         // result: create작업 후 생성된 객체를 담는 변수
         let result = await insertStory(storyObj, transaction);
 
         /*
             새로 등록된 해시태그들의 id값을 기존의 hashtag에 추가한다.
          */
-        let arr = await insertHashtag(newHashtag, transaction);
-        for(i in arr){
-            hashtagId.push(arr[i]);
+        if(flag) {
+            storyObj.hashtags = await insertHashtag(storyObj.hashtags, transaction);
         }
 
         // story와 hashtag를 맵피하는 테이블 작업
-        await insertStoryHashtag(result.id, hashtagId, transaction);
+        await insertStoryHashtag(result.id, storyObj.hashtags, transaction);
 
         let story = {};
         story.id = result.id;
         story.title = result.title;
         story.description = result.description;
         story.image_url = result.image_url;
-        story.hashtagNmae = storyObj.hashtagName;
+        story.hashtags = storyObj.hashtags;
+        // story = result;
 
         await transaction.commit();
 
