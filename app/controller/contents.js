@@ -22,7 +22,7 @@ exports.createContent = async (req, res, next) => {
         바로 error handler로 보낸다.
      */
     if (req.file != null) {
-        contentObj['image_url'] = url + req.file.filename;
+        contentObj.image_url = url + req.file.filename;
     } else {
         let error = new Error("An image file is required. You didn't send an image file");
         error.status = 400;

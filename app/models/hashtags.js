@@ -15,7 +15,6 @@ exports.insertHashtag = async (hashtag, transaction) => {
     try {
         for (let i in hashtag) {
             if (!hashtag[i].id) {
-                console.log(hashtag[i].name);
                 let arr = await hashtags.create({
                     name: hashtag[i].name
                 }, {transaction});
