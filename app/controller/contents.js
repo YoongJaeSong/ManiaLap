@@ -2,7 +2,7 @@ const fs = require('fs');
 const {insertContent, selectContent, selectContents} = require('../models/contents');
 
 /*
-    [POST] /api/stories/:storyId/contents
+    [POST] /api/contents
 */
 exports.createContent = async (req, res, next) => {
     // token으로 designerId값을 받는다.
@@ -15,29 +15,29 @@ exports.createContent = async (req, res, next) => {
     */
     let contentObj = {};
     contentObj = req.body;
-    contentObj['designers_id'] = designerId;
-    contentObj['story_id'] = req.params.storyId;
+    contentObj.designers_id = designerId;
 
+    /*
+        image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
+        바로 error handler로 보낸다.
+     */
+    if (req.file != null) {
+        contentObj['image_url'] = url + req.file.filename;
+    } else {
+        let error = new Error("An image file is required. You didn't send an image file");
+        error.status = 400;
+
+        return next(error);
+    }
 
     try {
-        /*
-            image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
-            바로 error handler로 보낸다.
-         */
-        if (req.file != null) {
-            contentObj['image_url'] = url + req.file.filename;
-        } else {
-            let error = new Error("An image file is required. You didn't send an image file");
-            error.status = 400;
-
-            return next(error);
-        }
-
         let result = await insertContent(contentObj);
 
         // 방금 생성된 컨텐츠의 id, image_url를 보내주기 위해 필요한 데이터
         let content = {};
         content.id = result.id;
+        content.title = result.title;
+        content.description = result.description;
         content.image_url = result.image_url;
 
         res.status(201);
@@ -62,7 +62,7 @@ exports.createContent = async (req, res, next) => {
     storyId를 가진 스토리에 해당된 content들을 다 가져온다.
     content 정보: id, 제목, 설명, 이미지
  */
-exports.getContents = async (req, res, next) =>{
+exports.getContents = async (req, res, next) => {
 
     let storyId = req.params.storyId;
 

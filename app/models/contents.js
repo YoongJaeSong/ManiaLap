@@ -8,6 +8,9 @@ exports.insertContent = async (contentObj) => {
     }
 };
 
+/*
+    스토리에 해당되는 content를 모두 가져오는 작업
+ */
 exports.selectContents = async (storyId) => {
 
     let option = {
@@ -17,23 +20,20 @@ exports.selectContents = async (storyId) => {
     };
 
     try {
-        let arr = await contents.findAll(option);
+        let result = await contents.findAll(option);
 
-        if (arr == null) {
+        // findAll은 결과가 없으면 빈 object로 반환
+        // Object.keys(object).length를 이용
+        if (!Object.keys(result).length) {
             let error = new Error("No Query Result");
             error.status = 400;
 
             throw error;
         }
 
-        let result = [];
-        for (i in arr) {
-            result.push(arr[i]);
-        }
-
         return result;
     } catch (err) {
-        throw(err);
+        throw err;
     }
 
 };
@@ -47,7 +47,9 @@ exports.selectContent = async (contentId, storyId) => {
     try {
         let result = await contents.findOne(option);
 
-        if (result == null) {
+        // findOne은 결과가 없으면 null로 반환
+        // 결과가 있는지 없는지 확인하는 작업
+        if (!result) {
             let error = new Error("No Query Result");
             error.status = 400;
 

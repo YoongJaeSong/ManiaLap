@@ -19,12 +19,12 @@ exports.insertStory = async (storyObj, transaction) => {
 /*
     기존의 문자를 숫자로 바꾸는 작업을 제거 문자열로 해도 정상 작동
 */
-exports.insertStoryHashtag = async (id, hashtagId, transaction)=>{
+exports.insertStoryHashtag = async (storyId, hashtags, transaction)=>{
     try {
-        for (i in hashtagId) {
+        for (let obj of hashtags) {
             await storyHashtags.create({
-                story_id: id,
-                hashtag_id: hashtagId[i]
+                story_id: storyId,
+                hashtag_id: obj.id
             }, {transaction});
         }
     } catch (err) {
@@ -46,20 +46,15 @@ exports.selectStories = async (designerId, page) => {
         order: [['id', 'desc']]
     };
 
-    let result = [];
     try {
-        let arr = await stories.findAll(option);
+        let result = await stories.findAll(option);
 
         // 가져온 데이터가 없는 경우
-        if(arr[0] == null){
+        if(!Object.keys(result).length){
             let error = new Error("No Query Result");
             error.status = 400;
 
             throw error;
-        }
-
-        for(let i in arr){
-            result.push(arr[i]);
         }
 
         return result;
