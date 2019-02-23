@@ -42,7 +42,7 @@ exports.getHashtags = async (req, res, next)=>{
 
         res.status(200);
         res.json({
-            temp: result
+            hashtags: result
         });
     } catch (err) {
         next(err);

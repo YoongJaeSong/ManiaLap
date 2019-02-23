@@ -36,7 +36,7 @@ exports.insertHashtag = async (hashtag, transaction) => {
 
     더 좋은 검색구현 찾아 볼 것
  */
-exports.searchHashtags = async (name) => {
+exports.searchHashtags = (name) => {
 
     let option = {
         attributes: ['id', 'name'],
@@ -44,7 +44,7 @@ exports.searchHashtags = async (name) => {
     };
 
     try {
-        return await hashtags.findAll(option);
+        return hashtags.findAll(option);
     } catch (err) {
         throw err;
     }
