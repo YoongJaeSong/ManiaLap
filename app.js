@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const logger = require('morgan');
 const router = require('./routes/index');
 const stories = require('./routes/stories');
+const contents = require('./routes/contents');
+const profile = require('./routes/profile');
 require('dotenv').config();
 
 const app = express();
@@ -28,7 +30,9 @@ app.use('/', (req, res, next)=>{
 });
 
 app.use('/', router);
-app.use('/stories', stories);
+app.use('/api/profile', profile);
+app.use('/api/stories', stories);
+app.use('/api/contents', contents);
 
 
 // catch 404 and forward to error handler
