@@ -16,19 +16,20 @@ exports.selectDesigner = async (designerId)=>{
         ]
     }
 
+    let result = [];
     try {
-        let result = await designers.findAll(option);
-
-        // 결과가 없는지 확인하는 작업
-        if(!Object.keys(result).length){
-            let error = new Error("No Query Result");
-            error.status(400);
-
-            throw error;
-        }
-
-        return result;
+        result = await designers.findAll(option);
     } catch (err) {
         throw err;
     }
+
+    // 결과가 없는지 확인하는 작업
+    if(!Object.keys(result).length){
+        let error = new Error("No Query Result");
+        error.status(400);
+
+        throw error;
+    }
+
+    return result;
 };
