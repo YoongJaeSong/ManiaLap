@@ -1,4 +1,4 @@
-const {hashtags} = require('../../models/index');
+const {hashtags, storyHashtags, Op} = require('../../models/index');
 
 /*
     새로 들어온 해시태그를 등록하는 Query
@@ -25,6 +25,65 @@ exports.insertHashtag = async (hashtag, transaction) => {
         return hashtag;
     } catch (err) {
         throw err;
+    }
+
+};
+
+
+/*
+    해시태그를 특정 단어로 검색해 정보를 가져오는 작업
+    해시태그 정보: id, name
+
+    더 좋은 검색구현 찾아 볼 것
+ */
+exports.searchHashtags = (name) => {
+
+    let option = {
+        attributes: ['id', 'name'],
+        where: {name: {like: `%${name}%`}}
+    };
+
+    try {
+        return hashtags.findAll(option);
+    } catch (err) {
+        throw err;
+    }
+
+};
+
+
+/*
+    특정 스토리의 해시태그들을 가져오는 작업
+ */
+exports.selectHashtags = async (storyId) => {
+
+    let option = {
+        attributes: ['hashtag_id'],
+        where: {story_id: storyId}
+    }
+
+    try {
+        let hashtagsId = await storyHashtags.findAll(option);
+
+        if (!Object.keys(hashtagsId).length) {
+            let error = new Error("No Query Result");
+            error.status = 404;
+
+            throw error;
+        }
+
+        let arrId = [];
+        for(let obj of hashtagsId){
+            arrId.push(obj.dataValues.hashtag_id);
+        }
+
+        let result = await hashtags.findAll({
+            where: {id: {[Op.or]: arrId}}
+        });
+
+        return result;
+    } catch (err) {
+        throw err
     }
 
 };

@@ -46,21 +46,22 @@ exports.selectStories = async (designerId, page) => {
         order: [['id', 'desc']]
     };
 
+    let result = [];
     try {
-        let result = await stories.findAll(option);
-
-        // 가져온 데이터가 없는 경우
-        if(!Object.keys(result).length){
-            let error = new Error("No Query Result");
-            error.status = 400;
-
-            throw error;
-        }
-
-        return result;
+        result = await stories.findAll(option);
     } catch (err) {
         throw err;
     }
+
+    // 가져온 데이터가 없는 경우
+    if(!Object.keys(result).length){
+        let error = new Error("No Query Result");
+        error.status = 400;
+
+        throw error;
+    }
+
+    return result;
 };
 
 /*
