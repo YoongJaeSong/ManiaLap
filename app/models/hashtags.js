@@ -13,12 +13,12 @@ const {hashtags, storyHashtags, Op} = require('../../models/index');
 exports.insertHashtag = async (hashtag, transaction) => {
 
     try {
-        for (let i in hashtag) {
-            if (!hashtag[i].id) {
+        for(obj of hashtag){
+            if(!obj.id) {
                 let arr = await hashtags.create({
-                    name: hashtag[i].name
+                    name: obj.name
                 }, {transaction});
-                hashtag[i].id = arr.id;
+                obj.id = arr.id;
             }
         }
 

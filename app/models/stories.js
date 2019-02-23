@@ -76,7 +76,7 @@ exports.selectStory = async (storyId) =>{
     try {
         let result = await stories.findOne(option);
 
-        if(result == null){
+        if(!result){
             let error = new Error("No Query Result");
             error.status = 400;
 
