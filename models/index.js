@@ -17,13 +17,13 @@ if (config.use_env_variable) {
 fs.readdirSync(__dirname)
     .filter(file => {
         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-    })
-    .forEach(file => {
+})
+.forEach(file => {
         // 현재 폴더내에 있는 파일들을 불러오는 작업
         // 이 작업으로 model정의들과 같은 object를 생성한다.
         const model = sequelize['import'](path.join(__dirname, file));
         db[model.name] = model;
-    });
+});
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
@@ -44,9 +44,7 @@ db.hashtags = require('./hashtags')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
 db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
-db.usersDesingersComments = require('./users_designers_comments')(sequelize, Sequelize);
 db.designers = require('./designers')(sequelize, Sequelize);
-db.comments = require('./comments')(sequelize, Sequelize);
 
 db.designers.hasMany(db.stories, {foreignKey: 'designers_id'});
 db.users.hasOne(db.designers, {foreignKey: 'users_id', targetKey: 'users_id'});
