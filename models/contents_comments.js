@@ -1,21 +1,16 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('contents', {
+  return sequelize.define('contents_comments', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    description: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    image_url: {
+    text: {
       type: DataTypes.STRING(100),
-      allowNull: false,
-      unique: true
+      allowNull: false
     },
     created_at: {
       type: DataTypes.DATE,
@@ -30,23 +25,23 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    story_id: {
+    users_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'users',
         key: 'id'
       }
     },
-    designers_id: {
+    contents_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'designers',
+        model: 'contents',
         key: 'id'
       }
     }
   }, {
-    tableName: 'contents'
+    tableName: 'contents_comments'
   });
 };
