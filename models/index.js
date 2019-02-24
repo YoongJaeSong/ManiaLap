@@ -44,9 +44,7 @@ db.hashtags = require('./hashtags')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
 db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
-db.usersDesingersComments = require('./users_designers_comments')(sequelize, Sequelize);
 db.designers = require('./designers')(sequelize, Sequelize);
-db.comments = require('./comments')(sequelize, Sequelize);
 
 db.designers.hasMany(db.stories, {foreignKey: 'designers_id'});
 db.users.hasOne(db.designers, {foreignKey: 'users_id', targetKey: 'users_id'});
