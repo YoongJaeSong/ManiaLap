@@ -1,17 +1,28 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('hashtags', {
+  return sequelize.define('user_supprot_designers', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    name: {
-      type: DataTypes.STRING(45),
+    user_id: {
+      type: DataTypes.INTEGER(11),
       allowNull: false,
-      unique: true
+      references: {
+        model: 'users',
+        key: 'id'
+      }
+    },
+    designers_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'designers',
+        key: 'id'
+      }
     },
     created_at: {
       type: DataTypes.DATE,
@@ -19,6 +30,6 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'hashtags'
+    tableName: 'user_supprot_designers'
   });
 };
