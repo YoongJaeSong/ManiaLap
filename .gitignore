@@ -97,4 +97,7 @@ public/uploads/**
 # security key
 key.json
 
+# auth RSA512 key
+mania_auth.key
+
 # End of https://www.gitignore.io/api/node

@@ -3,8 +3,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
+const {tokenValidater, authHandler} = require('./services/auth_service')
 const router = require('./routes/index');
 const stories = require('./routes/stories');
+const {signUp, signIn} = require('./routes/auth')
 const contents = require('./routes/contents');
 const profile = require('./routes/profile');
 const hashtags = require('./routes/hashtags');
@@ -18,7 +20,6 @@ console.log(process.env.NODE_ENV);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
-
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({extend: true}));
 app.use(bodyParser.json());
@@ -30,12 +31,17 @@ app.use('/', (req, res, next)=>{
     next();
 });
 
+//app.use('/', router);
+
+app.post('/signUp', signUp);
+app.post('/signIn', signIn);
+
+app.use('/api', authHandler);
 app.use('/', router);
 app.use('/api/profile', profile);
 app.use('/api/stories', stories);
 app.use('/api/contents', contents);
 app.use('/api/hashtags', hashtags);
-
 
 // catch 404 and forward to error handler
 app.use((req, res, next) =>{

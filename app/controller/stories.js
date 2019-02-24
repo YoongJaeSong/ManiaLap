@@ -134,10 +134,13 @@ exports.getStories = async (req, res, next) => {
 
     스토리 정보(id, 제목, 설명, 대표 이미지)를 가져오는 api
 */
-exports.getStory = async (req, res, next) => {
-
+exports.getStory = async (req, res, next) => {  
     let storyId = req.params.storyId;
-
+    let page = 1;
+    console.log(userId, storyId);
+    if (req.query.page != null) {
+        page = req.query.page;
+    }
     try {
         let story = await selectStory(storyId);
 

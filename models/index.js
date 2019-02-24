@@ -17,13 +17,13 @@ if (config.use_env_variable) {
 fs.readdirSync(__dirname)
     .filter(file => {
         return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-    })
-    .forEach(file => {
+})
+.forEach(file => {
         // 현재 폴더내에 있는 파일들을 불러오는 작업
         // 이 작업으로 model정의들과 같은 object를 생성한다.
         const model = sequelize['import'](path.join(__dirname, file));
         db[model.name] = model;
-    });
+});
 
 Object.keys(db).forEach(modelName => {
     if (db[modelName].associate) {
