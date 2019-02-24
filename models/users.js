@@ -16,20 +16,16 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING(45),
       allowNull: true
     },
-    description: {
-      type: DataTypes.STRING(200),
-      allowNull: true
+    gender: {
+      type: DataTypes.INTEGER(1),
+      allowNull: false
     },
     phone: {
       type: DataTypes.CHAR(13),
       allowNull: true
     },
-    profile_image_url: {
-      type: DataTypes.STRING(100),
-      allowNull: true
-    },
     token: {
-      type: DataTypes.STRING(60),
+      type: DataTypes.STRING(256),
       allowNull: true
     },
     fb_token: {
@@ -38,6 +34,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     insta_token: {
       type: DataTypes.STRING(200),
+      allowNull: true
+    },
+    kakao_token: {
+      type: DataTypes.STRING(200),
+      allowNull: true
+    },
+    support: {
+      type: DataTypes.INTEGER(11),
       allowNull: true
     },
     created_at: {
@@ -52,15 +56,6 @@ module.exports = function(sequelize, DataTypes) {
     deleted_at: {
       type: DataTypes.DATE,
       allowNull: true
-    },
-    gender: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false
-    },
-    designer: {
-      type: DataTypes.INTEGER(1),
-      allowNull: false,
-      defaultValue: '0'
     }
   }, {
     tableName: 'users'

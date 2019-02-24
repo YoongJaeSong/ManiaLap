@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user_follow_stories', {
+  return sequelize.define('user_supprot_designers', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -16,11 +16,11 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    story_id: {
+    designers_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'designers',
         key: 'id'
       }
     },
@@ -30,6 +30,6 @@ module.exports = function(sequelize, DataTypes) {
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'user_follow_stories'
+    tableName: 'user_supprot_designers'
   });
 };

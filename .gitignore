@@ -87,9 +87,6 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
-# www file in bin directories
-bin/**
-
 # All of files in uploads
 public/uploads/**
 !public/uploads/.keep
@@ -99,5 +96,8 @@ public/uploads/**
 
 # security key
 key.json
+
+# auth RSA512 key
+mania_auth.key
 
 # End of https://www.gitignore.io/api/node

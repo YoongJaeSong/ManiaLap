@@ -1,15 +1,12 @@
 const fs = require('fs');
-const {insertContent, selectContent} = require('../models/contents');
+const {insertContent, selectContent, selectContents} = require('../models/contents');
 
 /*
-    [POST] /stories/:storyId/contents
-
-    해야 할 것
-     (1) error 처리에서 파일 삭제를 마치고 next로 넘어가도록 수정이 필요
+    [POST] /api/contents
 */
 exports.createContent = async (req, res, next) => {
-    // token으로 user_id값을 받는다.
-    let userId = 3;
+    // token으로 designerId값을 받는다.
+    let designerId = 3;
     let url = process.env.URL;
 
     /*
@@ -18,30 +15,30 @@ exports.createContent = async (req, res, next) => {
     */
     let contentObj = {};
     contentObj = req.body;
-    contentObj['user_id'] = userId;
-    contentObj['story_id'] = req.params.storyId;
+    contentObj.designers_id = designerId;
 
+    /*
+        image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
+        바로 error handler로 보낸다.
+     */
+    if (req.file) {
+        contentObj.image_url = url + req.file.filename;
+    } else {
+        let error = new Error("An image file is required. You didn't send an image file");
+        error.status = 400;
+
+        return next(error);
+    }
 
     try {
-        /*
-            image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
-            바로 error handler로 보낸다.
-         */
-        if (req.file != null) {
-            contentObj['image_url'] = url + req.file.filename;
-        } else {
-            let error = new Error("An image file is required. You didn't send an image file");
-            error.status = 400;
-
-            return next(error);
-        }
-
         let result = await insertContent(contentObj);
 
         // 방금 생성된 컨텐츠의 id, image_url를 보내주기 위해 필요한 데이터
         let content = {};
-        content.id = result.dataValues.id;
-        content.image_url = result.dataValues.image_url;
+        content.id = result.id;
+        content.title = result.title;
+        content.description = result.description;
+        content.image_url = result.image_url;
 
         res.status(201);
         res.json({
@@ -60,22 +57,46 @@ exports.createContent = async (req, res, next) => {
 
 
 /*
-    [GET] /stories/:storyId/contents/:contentId
+    [GET] /api/stories/:storyId/contents
 
-    해야 할 일
-     (1) section에 대한 처리
-     (2) query 결과물이 없을 경우에 대한 error처리가 미흡
+    storyId를 가진 스토리에 해당된 content들을 다 가져온다.
+    content 정보: id, 제목, 설명, 이미지
+ */
+exports.getContents = async (req, res, next) => {
+
+    let storyId = req.params.storyId;
+
+    try {
+        let contents = await selectContents(storyId);
+
+        res.status(200);
+        res.json({
+            'msg': "success",
+            'contents': contents
+        });
+    } catch (err) {
+        next(err);
+    }
+
+};
+
+
+/*
+    [GET] /api/stories/:storyId/contents/:contentId
+
+    contentId의 content의 정보를 가져오는 api
+    content 정보: 제목, 설명, 이미지
+
+    issue
+     (1) 전 화면에서 이미 컨텐츠에 대한 모든 정보를 가지고 있는데 다시 요청을 해야함?
  */
 exports.getContent = async (req, res, next) => {
-    // token으로 가져올 데이터
-    let userId = 3;
+
     let contentId = req.params.contentId;
     let storyId = req.params.storyId;
 
-    console.log(req);
-    console.log(req.params);
     try {
-        let content = await selectContent(contentId, userId, storyId);
+        let content = await selectContent(contentId, storyId);
 
         res.status(200);
         res.json({

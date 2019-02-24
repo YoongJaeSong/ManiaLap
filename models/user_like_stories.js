@@ -1,27 +1,14 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('content_comments', {
+  return sequelize.define('user_like_stories', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    comment: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    writer_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -29,15 +16,20 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    content_id: {
+    story_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'contents',
+        model: 'stories',
         key: 'id'
       }
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
-    tableName: 'content_comments'
+    tableName: 'user_like_stories'
   });
 };

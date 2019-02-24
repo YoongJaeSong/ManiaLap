@@ -1,8 +1,15 @@
-const {story, content, storyHashtags} = require('../../models/index');
+const {stories, storyHashtags} = require('../../models/index');
 
-exports.insertStory = async (storyObj) => {
+/*
+    story만드는 Query
+
+    transaction 작업을 하기 위해서 transaction을 두번째 인자로 넘겨줘야 한다.
+ */
+exports.insertStory = async (storyObj, transaction) => {
     try {
-        return await story.create(storyObj);
+        let result = await stories.create(storyObj, {transaction});
+
+        return result.dataValues;
     } catch (err) {
         throw err;
     }
@@ -12,24 +19,28 @@ exports.insertStory = async (storyObj) => {
 /*
     기존의 문자를 숫자로 바꾸는 작업을 제거 문자열로 해도 정상 작동
 */
-exports.insertStoryHashtag = async (id, hashtagId)=>{
+exports.insertStoryHashtag = async (storyId, hashtags, transaction)=>{
     try {
-        for (i in hashtagId) {
-            console.log("hashtagId: " + hashtagId[i]);
+        for (let obj of hashtags) {
             await storyHashtags.create({
-                story_id: id,
-                hashtag_id: hashtagId[i]
-            });
+                story_id: storyId,
+                hashtag_id: obj.id
+            }, {transaction});
         }
     } catch (err) {
         throw err;
     }
 };
 
-exports.selectStories = async (userId, page) => {
+
+/*
+    스토리의 정보를 가져오는 Query
+    스토리 정보: id, 제목, 설명, 대표 이미지
+ */
+exports.selectStories = async (designerId, page) => {
     let option = {
-        attributes: ["id", "image_url"],
-        where: {user_id: userId},
+        attributes: ["id", "title", "description", "image_url"],
+        where: {designers_id: designerId},
         limit: 4,
         offset: (page - 1) * 4,
         order: [['id', 'desc']]
@@ -37,47 +48,40 @@ exports.selectStories = async (userId, page) => {
 
     let result = [];
     try {
-        let arr = await story.findAll(option);
-
-        if(arr == null){
-            let error = new Error("No Query Result");
-            error.status = 400;
-
-            throw error;
-        }
-
-        for(let i in arr){
-            result.push(arr[i].dataValues);
-        }
-
-        return result;
+        result = await stories.findAll(option);
     } catch (err) {
         throw err;
     }
+
+    // 가져온 데이터가 없는 경우
+    if(!Object.keys(result).length){
+        let error = new Error("No Query Result");
+        error.status = 400;
+
+        throw error;
+    }
+
+    return result;
 };
 
-exports.selectStory = async (storyId, userId, page) =>{
+/*
+    스토리 하나의 정보를 가져오는 api
+    스토리 정보: id, 제목, 설명, 대표 이미지
+ */
+exports.selectStory = async (storyId) =>{
     let option = {
-        attributes: ["id", "image_url"],
-        where: {story_id: storyId, user_id: userId},
-        limit: 4,
-        offset: (page - 1) * 4,
-        order: [['id', 'desc']]
+        attributes: ["id", "title", "description", "image_url"],
+        where: {id: storyId}
     };
 
-    let result = [];
     try {
-        let arr = await content.findAll(option);
+        let result = await stories.findOne(option);
 
-        if(arr.dataValues == null){
+        if(!result){
             let error = new Error("No Query Result");
             error.status = 400;
 
             throw error;
-        }
-
-        for(let i in arr){
-            result.push(arr[i].dataValues);
         }
 
         return result;

@@ -16,13 +16,18 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    designer_id: {
+    designers_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'designers',
         key: 'id'
       }
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     }
   }, {
     tableName: 'user_follow_designers'
