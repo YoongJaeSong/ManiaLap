@@ -25,11 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     token: {
-<<<<<<< HEAD
-      type: DataTypes.STRING(60),
-=======
       type: DataTypes.STRING(256),
->>>>>>> 008df5c8bf3003c674c0fe3f43531dc9653e350a
       allowNull: true
     },
     fb_token: {
