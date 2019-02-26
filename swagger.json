@@ -513,7 +513,7 @@
         "description": {
           "type": "string"
         },
-        "image": {
+        "image_url": {
           "type": "string"
         },
         "likeNum": {
