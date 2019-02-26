@@ -57,6 +57,7 @@ db.storyCollections = require('./story_collections')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.userCollections = require('./user_collections')(sequelize, Sequelize);
 db.userLikeStories = require('./user_like_stories')(sequelize, Sequelize);
+
 db.userSupportDesigners = require('./user_support_designers')(sequelize, Sequelize);
 
 // 테이블 관계 연결
