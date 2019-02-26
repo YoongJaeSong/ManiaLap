@@ -57,7 +57,6 @@ db.storyCollections = require('./story_collections')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.userCollections = require('./user_collections')(sequelize, Sequelize);
 db.userLikeStories = require('./user_like_stories')(sequelize, Sequelize);
-
 db.userSupportDesigners = require('./user_support_designers')(sequelize, Sequelize);
 
 // 테이블 관계 연결
@@ -70,6 +69,7 @@ db.designers.hasMany(db.contents, {foreignKey: 'designers_id'});
 db.designers.belongsTo(db.users, {foreignKey: 'users_id', targetKey: 'id'});
 db.designers.hasMany(db.userSupportDesigners, {foreignKey: 'designers_id'});
 db.designers.hasMany(db.userFollowDesigners, {foreignKey: 'designers_id'});
+
 
 db.stories.hasMany(db.contents, {foreignKey: 'stories_id'});
 db.stories.hasMany(db.storyComments, {foreignKey: 'stories_id'});

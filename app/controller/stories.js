@@ -17,7 +17,6 @@ exports.createStory = async (req, res, next) => {
 
         return next(error);
     }
-
     let url = process.env.URL;
 
     /*
@@ -41,6 +40,7 @@ exports.createStory = async (req, res, next) => {
         let result = await insertStory(storyObj, transaction);
 
         // 해시태그 이름들의 중복을 제거하기 위해 set자료 사용
+
         let hashtagNamesSet = new Set(req.body.hashtagNames);
         let hashtagsObj = await checkHashtag(hashtagNamesSet, transaction);
 

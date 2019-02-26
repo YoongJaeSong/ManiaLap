@@ -1,4 +1,3 @@
-
 const {stories, storyHashtags, sequelize} = require('../../models/index');
 /*
     story만드는 Query
