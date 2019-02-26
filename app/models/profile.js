@@ -1,4 +1,4 @@
-const {designers, stories, sequelize, users} = require('../../models/index');
+const {designers, stories, sequelize} = require('../../models/index');
 
 
 /*
