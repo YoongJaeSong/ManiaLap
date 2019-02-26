@@ -5,8 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "test": "node_modules/.bin/mocha $(find ./ -name '*.js') --recursive -w",
-    "start_window": "set NODE_ENV=development&&supervisor ./bin/www",
-    "start_production": "set NODE_ENV=production&&supervisor ./bin/www"
+    "start_window": "set NODE_ENV=test&&supervisor ./bin/www"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

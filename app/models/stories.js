@@ -1,4 +1,4 @@
-const {stories, storyHashtags} = require('../../models/index');
+const {stories, storyHashtags, sequelize} = require('../../models/index');
 
 /*
     story만드는 Query
@@ -19,7 +19,7 @@ exports.insertStory = async (storyObj, transaction) => {
 /*
     기존의 문자를 숫자로 바꾸는 작업을 제거 문자열로 해도 정상 작동
 */
-exports.insertStoryHashtag = async (storyId, hashtags, transaction)=>{
+exports.insertStoryHashtag = async (storyId, hashtags, transaction) => {
     try {
         for (let obj of hashtags) {
             await storyHashtags.create({
@@ -37,14 +37,47 @@ exports.insertStoryHashtag = async (storyId, hashtags, transaction)=>{
     스토리의 정보를 가져오는 Query
     스토리 정보: id, 제목, 설명, 대표 이미지
  */
-exports.selectStories = async (designerId, page) => {
+exports.selectStories = async (designerId, page, flag) => {
     let option = {
-        attributes: ["id", "title", "description", "image_url"],
+        attributes: [
+            "id",
+            "title",
+            "description",
+            "image_url",
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id) 
+                        FROM user_like_stories 
+                       WHERE stories.id = stories_id)`
+                ),
+                'likeNum'
+            ],
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id)
+                        FROM story_comments
+                       WHERE stories.id = stories_id)`
+                ),
+                'commentNum'
+            ],
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id)
+                        FROM story_collections
+                       WHERE stories.id = stories.id)`
+                ),
+                'storeNum'
+            ]
+        ],
         where: {designers_id: designerId},
         limit: 4,
         offset: (page - 1) * 4,
-        order: [['id', 'desc']]
+        order: [['id', 'asc']]
     };
+
+    if (flag) {
+        option.where.private_status = 1;
+    }
 
     let result = [];
     try {
@@ -54,7 +87,7 @@ exports.selectStories = async (designerId, page) => {
     }
 
     // 가져온 데이터가 없는 경우
-    if(!Object.keys(result).length){
+    if (!Object.keys(result).length) {
         let error = new Error("No Query Result");
         error.status = 400;
 
@@ -66,26 +99,56 @@ exports.selectStories = async (designerId, page) => {
 
 /*
     스토리 하나의 정보를 가져오는 api
-    스토리 정보: id, 제목, 설명, 대표 이미지
+    스토리 정보: id, 제목, 설명, 대표 이미지, content 개수
  */
-exports.selectStory = async (storyId) =>{
+exports.selectStory = async (storyId) => {
     let option = {
-        attributes: ["id", "title", "description", "image_url"],
+        attributes: [
+            "id",
+            "title",
+            "description",
+            "image_url",
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id) 
+                        FROM user_like_stories 
+                       WHERE stories_id = ${storyId})`
+                ),
+                'likeNum'
+            ],
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id)
+                        FROM story_comments
+                       WHERE stories_id = ${storyId})`
+                ),
+                'commentNum'
+            ],
+            [
+                sequelize.literal(
+                    `(SELECT COUNT(DISTINCT id)
+                        FROM story_collections
+                       WHERE stories.id = ${storyId})`
+                ),
+                'storeNum'
+            ]
+        ],
         where: {id: storyId}
     };
 
+    let result = null;
     try {
-        let result = await stories.findOne(option);
-
-        if(!result){
-            let error = new Error("No Query Result");
-            error.status = 400;
-
-            throw error;
-        }
-
-        return result;
+        result = await stories.findOne(option);
     } catch (err) {
         throw err;
     }
+
+    if (!result) {
+        let error = new Error("No Query Result");
+        error.status = 400;
+
+        throw error;
+    }
+
+    return result;
 };
