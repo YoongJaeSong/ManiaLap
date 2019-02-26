@@ -17,9 +17,9 @@ exports.getDesignerProfile = async (req, res, next) => {
      */
     if(req.query.designerId){
         designerId = req.query.designerId;
+        flag = 1;
     }else{
         designerId = req.authInfo.designerId;
-        flag = 1;
     }
 
     let profile = {};

@@ -20,7 +20,7 @@ exports.selectDesigner = async (designerId, flag)=>{
                 sequelize.literal(
                     `(SELECT COUNT(*) 
                         FROM stories 
-                       WHERE designers_id = ${designerId} AND private_status <= ${flag})`
+                       WHERE designers_id = ${designerId} AND private_status >= ${flag})`
                 ),
                 'storyNum'
             ],
