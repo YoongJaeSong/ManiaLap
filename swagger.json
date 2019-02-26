@@ -9,7 +9,7 @@
       "name": "YoonJae Song"
     }
   },
-  "host": "localhost:3100",
+  "host": "http://kalin.iptime.org:3100",
   "basePath": "/",
   "tags": [
     {
