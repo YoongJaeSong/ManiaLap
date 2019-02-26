@@ -21,7 +21,6 @@ exports.checkHashtag = async (hashtagNames, transaction) => {
             obj.name = result[0].name;
             hashtagsObj.push(obj);
         }
-
         return hashtagsObj;
     } catch (err) {
         throw err;
