@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "  [변경 사항] - 2019/02/17\n   1. 모든 api 앞에 /api를 추가\n 2. 기존의 api는 화면을 기준으로 잘못 작성해 리소스별로 api를 다시 수정 ",
+    "description": "  [변경 사항] - 2019/02/21 ~ 2019/02/27\n   1. story, content관련 응답model 변경\n 2. /api/contents에서 story_id -> stories_id로 변경\n 3. /api/profile에서 query파라미터는 designerId만 존재하며 응답결과도 디자이너 정보만 응답한다.\n 4. /api/hashtag 기능 구현 ",
     "version": "1.0.0",
     "title": "Project_mania",
     "termsOfService": "https://sejongduck.slack.com/messages/DD8VA56BD/convo/CD3D3F41E-1543895986.000500/",
@@ -14,15 +14,19 @@
   "tags": [
     {
       "name": "profile",
-      "description": "작가 정보에 대한 api"
+      "description": "작가 리소스에 대한 api"
     },
     {
       "name": "story",
-      "description": "story 정보에 대한 api"
+      "description": "story 리소스에 대한 api"
     },
     {
       "name": "content",
-      "description": "content작업에 대한 api"
+      "description": "content 리소스에 대한 api"
+    },
+    {
+      "name": "hashtag",
+      "description": "hashtag 리소스에 대한 api"
     },
     {
       "name": "Later",
@@ -39,7 +43,7 @@
           "profile"
         ],
         "summary": "user or designer의 프로필에 관한 api",
-        "description": " desginerId\n - 정보: id, 작가명, 소개, 프로필이미지, 스토리 개수, 받은 으원의 수, 팔로우 수\n - 받은 id값으로 해당 작가의 프로필 정보를 가져온다.\n\n userId\n - 정보: id, 이름or닉네임, 프로필 이미지, 남은 응원의 수, 여태껏한 응원의 수, 팔로우한 작가의 정보, 팔로우한 스토리의 정보\n - 받은 id값으로 해당 유저의 프로필 정보를 가져온다. ",
+        "description": " desginerId\n - null이면 본인의 페이지 따라서 비활성화 스토리 정보도 가져온다.\n - null이 아니면 타인의 페이지 비활성화 스토리 정보는 가져오지 않는다. ",
         "produces": [
           "application/json"
         ],
@@ -53,13 +57,6 @@
             "description": "어떤 작가의 공간인지 확인하기 위해",
             "required": false,
             "type": "integer"
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "type": "integer",
-            "description": "어떤 유저인지 확인하기 위해",
-            "required": false
           }
         ],
         "responses": {
@@ -70,9 +67,6 @@
               "properties": {
                 "msg": {
                   "type": "string"
-                },
-                "user": {
-                  "$ref": "#/definitions/user"
                 },
                 "designer": {
                   "$ref": "#/definitions/designer"
@@ -148,17 +142,7 @@
         "parameters": [
           {
             "in": "formData",
-            "name": "hashtagId",
-            "type": "array",
-            "collectionFormat": "multi",
-            "items": {
-              "type": "integer"
-            },
-            "description": "해쉬태그의 아이디 만약 기존의 없는 해쉬태그일 경우 null로 보낼 것"
-          },
-          {
-            "in": "formData",
-            "name": "hashtagName",
+            "name": "hashtagNames",
             "type": "array",
             "collectionFormat": "multi",
             "items": {
@@ -198,6 +182,17 @@
                 },
                 "story": {
                   "$ref": "#/definitions/story"
+                },
+                "hashtags": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
@@ -349,22 +344,15 @@
         "parameters": [
           {
             "in": "path",
-            "name": "storyId",
+            "name": "stories_id",
             "type": "integer",
             "required": true
           },
           {
             "in": "formData",
-            "name": "title",
-            "type": "string",
-            "required": true,
-            "description": "content 제목"
-          },
-          {
-            "in": "formData",
             "name": "description",
             "type": "string",
-            "required": false,
+            "required": true,
             "description": "content 설명"
           },
           {
@@ -457,23 +445,40 @@
     "/api/hashgtags": {
       "get": {
         "tags": [
-          "Later"
+          "hashtag"
         ],
         "summary": "해시태그 정보를 가져오는 api",
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Later"
+        "consumes": [
+          "application/json"
         ],
-        "summary": "새로운 해시태그를 등록하는 api",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "storyId",
+            "type": "integer",
+            "required": true
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "msg": {
+                  "type": "string"
+                },
+                "hashtags": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/hashtag"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -510,6 +515,15 @@
         },
         "image": {
           "type": "string"
+        },
+        "likeNum": {
+          "type": "integer"
+        },
+        "commentNum": {
+          "type": "integer"
+        },
+        "storeNum": {
+          "type": "integer"
         }
       }
     },
@@ -519,15 +533,20 @@
         "id": {
           "type": "integer"
         },
-        "title": {
-          "type": "string"
-        },
         "description": {
           "type": "string"
         },
         "image": {
           "type": "string",
           "description": "썸네일 or 원본 이미지"
+        },
+        "liekNum": {
+          "type": "integer",
+          "description": "공감 수"
+        },
+        "commentNum": {
+          "type": "integer",
+          "description": "의견 수"
         }
       }
     },
@@ -600,6 +619,18 @@
         "image": {
           "type": "string"
         },
+        "insta_url": {
+          "type": "string"
+        },
+        "fb_url": {
+          "type": "string"
+        },
+        "youtube_url": {
+          "type": "string"
+        },
+        "web_url": {
+          "type": "string"
+        },
         "storyNum": {
           "type": "integer",
           "description": "스토리 개수"
@@ -611,6 +642,17 @@
         "followNum": {
           "type": "integer",
           "description": "팔로우 수"
+        }
+      }
+    },
+    "hashtag": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
         }
       }
     }

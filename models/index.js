@@ -70,7 +70,6 @@ db.designers.belongsTo(db.users, {foreignKey: 'users_id', targetKey: 'id'});
 db.designers.hasMany(db.userSupportDesigners, {foreignKey: 'designers_id'});
 db.designers.hasMany(db.userFollowDesigners, {foreignKey: 'designers_id'});
 
-
 db.stories.hasMany(db.contents, {foreignKey: 'stories_id'});
 db.stories.hasMany(db.storyComments, {foreignKey: 'stories_id'});
 db.stories.hasMany(db.userLikeStories, {foreignKey: 'stories_id'});
