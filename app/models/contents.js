@@ -1,4 +1,4 @@
-const {contents} = require('../../models/index');
+const {contents, contentComments, userLikeContents, sequelize} = require('../../models/index');
 
 exports.insertContent = async (contentObj) => {
     try {
@@ -8,15 +8,26 @@ exports.insertContent = async (contentObj) => {
     }
 };
 
+
 /*
     스토리에 해당되는 content를 모두 가져오는 작업
+    id, 설명, 이미지, 공감/의견 수
  */
 exports.selectContents = async (storyId) => {
 
     let option = {
-        attributes: ['id', 'title', 'description', 'image_url'],
-        where: {story_id: storyId},
-        order: [['id', 'desc']]
+        attributes: [
+            "id",
+            "description",
+            "image_url",
+            [sequelize.literal(`(SELECT COUNT(DISTINCT id) FROM content_comments WHERE contents_id = contents.id)`), 'commentNum'],
+            [sequelize.literal('(SELECT COUNT(DISTINCT id) FROM user_like_contents WHERE contents_id = contents.id)'), 'likeNum']
+        ],
+        where: {stories_id: storyId},
+        include: [
+            {model: contentComments, required: false, attributes: []},
+            {model: userLikeContents, required: false, attributes: []}
+        ]
     };
 
     let result = [];
@@ -39,10 +50,13 @@ exports.selectContents = async (storyId) => {
 
 };
 
+/*
+    특정 content의 정보를 가져오는 작업
+ */
 exports.selectContent = async (contentId, storyId) => {
     let option = {
-        attributes: ['title', 'description', 'image_url'],
-        where: {id: contentId, story_id: storyId}
+        attributes: ['description', 'image_url'],
+        where: {id: contentId, stories_id: storyId}
     };
 
     let result = null;

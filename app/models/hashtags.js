@@ -1,28 +1,28 @@
 const {hashtags, storyHashtags, Op} = require('../../models/index');
 
 /*
-    새로 들어온 해시태그를 등록하는 Query
-
-    파라미터로 해시태그 객체 배열을 받는다.
-    비어있는 id가 있으면 해시태그를 만들고 만들어진 id값을 객체에 넣어준다.
-
-    [for-of대신 for-in을 쓴 이유]
-     for-of를 쓰게 되면 직접적으로 수정이 불가능하기 때문에
-     직접적으로 수정하기 위해서 for-in을 사용했다.
+    해시태그 이름들의 존재여부 확인 후
+    있으면 id, name으로 객체를 만든다.
+    없으면 name으로 해시태그를 만든후 객체 생성
  */
-exports.insertHashtag = async (hashtag, transaction) => {
+exports.checkHashtag = async (hashtagNames, transaction) => {
 
     try {
-        for(obj of hashtag){
-            if(!obj.id) {
-                let arr = await hashtags.create({
-                    name: obj.name
-                }, {transaction});
-                obj.id = arr.id;
-            }
+        let hashtagsObj = [];
+        for (name of hashtagNames) {
+            let result = await hashtags.findOrCreate({
+                where: {name: name},
+                defaults: {name: name},
+                transaction: transaction
+            });
+
+            let obj = {};
+            obj.id = result[0].id;
+            obj.name = result[0].name;
+            hashtagsObj.push(obj);
         }
 
-        return hashtag;
+        return hashtagsObj;
     } catch (err) {
         throw err;
     }
@@ -58,8 +58,8 @@ exports.searchHashtags = (name) => {
 exports.selectHashtags = async (storyId) => {
 
     let option = {
-        attributes: ['hashtag_id'],
-        where: {story_id: storyId}
+        attributes: ['hashtags_id'],
+        where: {stories_id: storyId}
     }
 
     try {
@@ -73,11 +73,12 @@ exports.selectHashtags = async (storyId) => {
         }
 
         let arrId = [];
-        for(let obj of hashtagsId){
-            arrId.push(obj.dataValues.hashtag_id);
+        for (let obj of hashtagsId) {
+            arrId.push(obj.dataValues.hashtags_id);
         }
 
         let result = await hashtags.findAll({
+            attributes: ['id', 'name'],
             where: {id: {[Op.or]: arrId}}
         });
 

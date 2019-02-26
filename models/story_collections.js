@@ -1,47 +1,35 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('stories_comments', {
+  return sequelize.define('story_collections', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    text: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    users_id: {
+    contents_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'contents',
         key: 'id'
       }
     },
-    stories_id: {
+    users_collections_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'users_collections',
         key: 'id'
       }
     }
   }, {
-    tableName: 'stories_comments'
+    tableName: 'story_collections'
   });
 };

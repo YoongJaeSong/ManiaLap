@@ -6,13 +6,10 @@ const {insertContent, selectContent, selectContents} = require('../models/conten
 */
 exports.createContent = async (req, res, next) => {
     // token으로 designerId값을 받는다.
-    let designerId = 3;
+    let designerId = req.authInfo.designerId;
     let url = process.env.URL;
 
-    /*
-        req.body에 담긴 데이터
-        title, description, image_url
-    */
+    // req.body에 담긴 데이터: description, image_url
     let contentObj = {};
     contentObj = req.body;
     contentObj.designers_id = designerId;
@@ -33,10 +30,9 @@ exports.createContent = async (req, res, next) => {
     try {
         let result = await insertContent(contentObj);
 
-        // 방금 생성된 컨텐츠의 id, image_url를 보내주기 위해 필요한 데이터
+        // 방금 생성된 컨텐츠의 id, description, image_url를 보내주기 위해 필요한 데이터
         let content = {};
         content.id = result.id;
-        content.title = result.title;
         content.description = result.description;
         content.image_url = result.image_url;
 
@@ -60,7 +56,7 @@ exports.createContent = async (req, res, next) => {
     [GET] /api/stories/:storyId/contents
 
     storyId를 가진 스토리에 해당된 content들을 다 가져온다.
-    content 정보: id, 제목, 설명, 이미지
+    content 정보: id, 제목, 설명, 이미지, 공감/의견 수
  */
 exports.getContents = async (req, res, next) => {
 
@@ -85,7 +81,7 @@ exports.getContents = async (req, res, next) => {
     [GET] /api/stories/:storyId/contents/:contentId
 
     contentId의 content의 정보를 가져오는 api
-    content 정보: 제목, 설명, 이미지
+    content 정보: 설명, 이미지
 
     issue
      (1) 전 화면에서 이미 컨텐츠에 대한 모든 정보를 가지고 있는데 다시 요청을 해야함?

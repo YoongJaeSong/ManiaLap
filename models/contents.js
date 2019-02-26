@@ -30,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    story_id: {
+    stories_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

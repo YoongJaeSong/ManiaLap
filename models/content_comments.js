@@ -1,15 +1,15 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('contents_comments', {
+  return sequelize.define('content_comments', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    text: {
-      type: DataTypes.STRING(100),
+    comment: {
+      type: DataTypes.STRING(45),
       allowNull: false
     },
     created_at: {
@@ -21,11 +21,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    users_id: {
+    writer_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -33,7 +29,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    contents_id: {
+    content_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -42,6 +38,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'contents_comments'
+    tableName: 'content_comments'
   });
 };
