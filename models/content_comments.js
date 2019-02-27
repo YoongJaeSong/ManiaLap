@@ -8,8 +8,8 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    comment: {
-      type: DataTypes.STRING(45),
+    text: {
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     created_at: {
@@ -21,7 +21,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    writer_id: {
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    users_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -29,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    content_id: {
+    contents_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

@@ -13,19 +13,19 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    contents_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      references: {
-        model: 'contents',
-        key: 'id'
-      }
-    },
     users_collections_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users_collections',
+        model: 'user_collections',
+        key: 'id'
+      }
+    },
+    stories_id: {
+      type: DataTypes.INTEGER(11),
+      allowNull: false,
+      references: {
+        model: 'stories',
         key: 'id'
       }
     }

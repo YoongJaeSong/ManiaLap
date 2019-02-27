@@ -22,9 +22,10 @@ exports.insertStory = async (storyObj, transaction) => {
 exports.insertStoryHashtag = async (storyId, hashtags, transaction) => {
     try {
         for (let obj of hashtags) {
+            console.log(obj);
             await storyHashtags.create({
-                story_id: storyId,
-                hashtag_id: obj.id
+                stories_id: storyId,
+                hashtags_id: obj.id
             }, {transaction});
         }
     } catch (err) {
