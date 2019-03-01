@@ -52,7 +52,7 @@
         ],
         "parameters": [
           {
-            "name": "desginerId",
+            "name": "designerId",
             "in": "query",
             "description": "어떤 작가의 공간인지 확인하기 위해",
             "required": false,
@@ -132,7 +132,7 @@
         ],
         "summary": "story 등록 api - Dug로 인해 해당 api는 test가 안됩니다",
         "description": "",
-        "operationId": "CreateStroy",
+        "operationId": "CreateStory",
         "consumes": [
           "multipart/form-data"
         ],
@@ -159,7 +159,7 @@
           },
           {
             "in": "formData",
-            "name": "decription",
+            "name": "description",
             "required": true,
             "type": "string",
             "description": "story 설명"
@@ -513,7 +513,7 @@
         "description": {
           "type": "string"
         },
-        "image": {
+        "image_url": {
           "type": "string"
         },
         "likeNum": {
