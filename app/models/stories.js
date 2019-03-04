@@ -37,7 +37,7 @@ exports.insertStoryHashtag = async (storyId, hashtags, transaction) => {
     스토리의 정보를 가져오는 Query
     스토리 정보: id, 제목, 설명, 대표 이미지
  */
-exports.selectStories = async (designerId, page, flag) => {
+exports.selectStories = async (creatorId, page, flag) => {
     let option = {
         attributes: [
             "id",
@@ -48,7 +48,7 @@ exports.selectStories = async (designerId, page, flag) => {
                 sequelize.literal(
                     `(SELECT COUNT(DISTINCT id) 
                         FROM user_like_stories 
-                       WHERE stories.id = stories_id)`
+                       WHERE stories.id = story_id)`
                 ),
                 'likeNum'
             ],
@@ -56,7 +56,7 @@ exports.selectStories = async (designerId, page, flag) => {
                 sequelize.literal(
                     `(SELECT COUNT(DISTINCT id)
                         FROM story_comments
-                       WHERE stories.id = stories_id)`
+                       WHERE stories.id = story_id)`
                 ),
                 'commentNum'
             ],
@@ -64,12 +64,12 @@ exports.selectStories = async (designerId, page, flag) => {
                 sequelize.literal(
                     `(SELECT COUNT(DISTINCT id)
                         FROM story_collections
-                       WHERE stories.id = stories.id)`
+                       WHERE stories.id = story_id)`
                 ),
                 'storeNum'
             ]
         ],
-        where: {designers_id: designerId},
+        where: {creator_id: creatorId},
         limit: 4,
         offset: (page - 1) * 4,
         order: [['id', 'asc']]
@@ -89,7 +89,7 @@ exports.selectStories = async (designerId, page, flag) => {
     // 가져온 데이터가 없는 경우
     if (!Object.keys(result).length) {
         let error = new Error("No Query Result");
-        error.status = 400;
+        error.status = 404;
 
         throw error;
     }
@@ -112,7 +112,7 @@ exports.selectStory = async (storyId) => {
                 sequelize.literal(
                     `(SELECT COUNT(DISTINCT id) 
                         FROM user_like_stories 
-                       WHERE stories_id = ${storyId})`
+                       WHERE story_id = ${storyId})`
                 ),
                 'likeNum'
             ],
@@ -120,7 +120,7 @@ exports.selectStory = async (storyId) => {
                 sequelize.literal(
                     `(SELECT COUNT(DISTINCT id)
                         FROM story_comments
-                       WHERE stories_id = ${storyId})`
+                       WHERE story_id = ${storyId})`
                 ),
                 'commentNum'
             ],

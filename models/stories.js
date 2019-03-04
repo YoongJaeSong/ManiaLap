@@ -39,11 +39,11 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    designers_id: {
+    creator_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'designers',
+        model: 'creators',
         key: 'id'
       }
     }

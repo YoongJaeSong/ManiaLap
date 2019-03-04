@@ -9,15 +9,14 @@ const {checkHashtag} = require('../models/hashtags');
  */
 exports.createStory = async (req, res, next) => {
     // token에서 designerd를 받는다.
-    let designerId = req.authInfo.designerId;
+    let creatorId = req.authInfo.designerId;
 
-    if (!designerId) {
+    if (!creatorId) {
         let error = new Error('Invalid approach');
         error.status = 404;
 
         return next(error);
     }
-    let url = process.env.URL;
 
     /*
         body 내용
@@ -27,9 +26,9 @@ exports.createStory = async (req, res, next) => {
     let storyObj = {};
     storyObj.title = req.body.title;
     storyObj.description = req.body.description;
-    storyObj.designers_id = designerId;
+    storyObj.creator_id = creatorId;
     if (req.file != null) {
-        storyObj.image_url = url + req.file.filename;
+        storyObj.image_url = process.env.URL + '/uploads/' + req.file.filename;
     }
 
     // get transaction
@@ -100,17 +99,17 @@ exports.getStories = async (req, res, next) => {
     let flag = 0; // 0: 본인의 page 1: 타인의 page
 
     if (req.query.designerId) {
-        designerId = req.query.designerId
+        creatorId = req.query.designerId
         flag = 1;
     } else {
-        designerId = req.authInfo.designerId;
+        creatorId = req.authInfo.designerId;
     }
 
     if (req.query.page != null)
         page = req.query.page;
 
     try {
-        let stories = await selectStories(designerId, page, flag);
+        let stories = await selectStories(creatorId, page, flag);
 
         res.status(200);
         res.json({

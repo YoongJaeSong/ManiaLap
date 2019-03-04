@@ -6,20 +6,20 @@ const {insertContent, selectContent, selectContents} = require('../models/conten
 */
 exports.createContent = async (req, res, next) => {
     // token으로 designerId값을 받는다.
-    let designerId = req.authInfo.designerId;
+    let creatorId = req.authInfo.designerId;
     let url = process.env.URL;
 
     // req.body에 담긴 데이터: description, image_url
     let contentObj = {};
     contentObj = req.body;
-    contentObj.designers_id = designerId;
+    contentObj.creator_id = creatorId;
 
     /*
         image_url은 필수 데이터 이기 때문 파일이 없으면 catch로 보내는 것이 아니라
         바로 error handler로 보낸다.
      */
     if (req.file) {
-        contentObj.image_url = url + req.file.filename;
+        contentObj.image_url = url + /uploads/ + req.file.filename;
     } else {
         let error = new Error("An image file is required. You didn't send an image file");
         error.status = 400;

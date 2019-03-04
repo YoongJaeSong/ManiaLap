@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    contents_id: {
+    content_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

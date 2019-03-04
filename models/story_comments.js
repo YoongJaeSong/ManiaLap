@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('stories_comments', {
+  return sequelize.define('story_comments', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    users_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    stories_id: {
+    story_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -42,6 +42,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'stories_comments'
+    tableName: 'story_comments'
   });
 };

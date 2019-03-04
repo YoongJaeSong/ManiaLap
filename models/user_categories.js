@@ -1,35 +1,30 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('story_collections', {
+  return sequelize.define('user_categories', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
-    },
-    user_collection_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'user_collections',
+        model: 'users',
         key: 'id'
       }
     },
-    story_id: {
+    category_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'stories',
+        model: 'categories',
         key: 'id'
       }
     }
   }, {
-    tableName: 'story_collections'
+    tableName: 'user_categories'
   });
 };

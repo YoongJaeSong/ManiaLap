@@ -1,7 +1,7 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('designers', {
+  return sequelize.define('creators', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
@@ -9,6 +9,14 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement: true
     },
     name: {
+      type: DataTypes.STRING(45),
+      allowNull: false
+    },
+    brand_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    nickname: {
       type: DataTypes.STRING(45),
       allowNull: false
     },
@@ -50,7 +58,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false
     },
-    users_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -59,6 +67,6 @@ module.exports = function(sequelize, DataTypes) {
       }
     }
   }, {
-    tableName: 'designers'
+    tableName: 'creators'
   });
 };
