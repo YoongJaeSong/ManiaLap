@@ -29,15 +29,15 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     fb_token: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(256),
       allowNull: true
     },
     insta_token: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(256),
       allowNull: true
     },
     kakao_token: {
-      type: DataTypes.STRING(200),
+      type: DataTypes.STRING(256),
       allowNull: true
     },
     support: {

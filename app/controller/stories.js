@@ -29,7 +29,7 @@ exports.createStory = async (req, res, next) => {
     storyObj.description = req.body.description;
     storyObj.designers_id = designerId;
     if (req.file != null) {
-        storyObj.image_url = url + req.file.filename;
+        storyObj.image_url = url + '/uploads/' + req.file.filename;
     }
 
     // get transaction
@@ -43,7 +43,7 @@ exports.createStory = async (req, res, next) => {
 
         let hashtagNamesSet = new Set(req.body.hashtagNames);
         let hashtagsObj = await checkHashtag(hashtagNamesSet, transaction);
-
+        console.log(hashtagsObj);
         // story와 hashtag를 맵피하는 테이블 작업
         await insertStoryHashtag(result.id, hashtagsObj, transaction);
 
