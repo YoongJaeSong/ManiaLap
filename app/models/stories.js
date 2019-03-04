@@ -72,7 +72,7 @@ exports.selectStories = async (creatorId, page, flag) => {
         where: {creator_id: creatorId},
         limit: 4,
         offset: (page - 1) * 4,
-        order: [['id', 'asc']]
+        order: [['id', 'desc']]
     };
 
     if (flag) {
