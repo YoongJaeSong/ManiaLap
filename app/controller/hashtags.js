@@ -35,7 +35,15 @@ exports.autoHashtags = async (req, res, next) => {
  */
 exports.getHashtags = async (req, res, next)=>{
 
-    const storyId = req.query.storyId;
+    let storyId = null;
+    if(req.query.storyId){
+        storyId = req.query.storyId;
+    }else{
+        let error = new Error("storyId is empty");
+        error.status = 404;
+
+        return next(error);
+    }
 
     try {
         let result = await selectHashtags(storyId);

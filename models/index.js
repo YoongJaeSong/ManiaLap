@@ -39,7 +39,7 @@ db.Op = Sequelize.Op;
 
 db.users = require('./users')(sequelize, Sequelize);
 
-db.designers = require('./designers')(sequelize, Sequelize);
+db.creators = require('./creators')(sequelize, Sequelize);
 
 db.stories = require('./stories')(sequelize, Sequelize);
 db.storyComments = require('./story_comments')(sequelize, Sequelize);
@@ -48,38 +48,43 @@ db.contents = require('./contents')(sequelize, Sequelize);
 db.contentComments = require('./content_comments')(sequelize, Sequelize);
 
 db.hashtags = require('./hashtags')(sequelize, Sequelize);
+db.categories = require('./categories')(sequelize, Sequelize);
+db.interests = require('./interests')(sequelize, Sequelize);
 
 // 매핑 테이블
-db.userFollowDesigners = require('./user_follow_designers')(sequelize, Sequelize);
+db.userFollowcreators = require('./user_follow_creators')(sequelize, Sequelize);
 db.userFollowStories = require('./user_follow_stories')(sequelize, Sequelize);
 db.userLikeContents = require('./user_like_contents')(sequelize, Sequelize);
 db.storyCollections = require('./story_collections')(sequelize, Sequelize);
 db.storyHashtags = require('./story_hashtags')(sequelize, Sequelize);
 db.userCollections = require('./user_collections')(sequelize, Sequelize);
 db.userLikeStories = require('./user_like_stories')(sequelize, Sequelize);
-db.userSupportDesigners = require('./user_support_designers')(sequelize, Sequelize);
+db.userSupportcreators = require('./user_support_creators')(sequelize, Sequelize);
+db.creatorCateogory = require('./creator_category')(sequelize, Sequelize);
+db.userInterest = require('./user_interest')(sequelize, Sequelize);
+db.userCategory = require('./user_categories')(sequelize, Sequelize);
 
 // 테이블 관계 연결
-db.users.hasOne(db.designers, {foreignKey: 'users_id', targetKey: 'users_id'});
-db.users.hasMany(db.contentComments, {foreignKey: 'users_id'});
-db.users.hasMany(db.userSupportDesigners, {foreignKey: 'users_id'});
+db.users.hasOne(db.creators, {foreignKey: 'user_id', targetKey: 'user_id'});
+db.users.hasMany(db.contentComments, {foreignKey: 'user_id'});
+db.users.hasMany(db.userSupportcreators, {foreignKey: 'user_id'});
 
-db.designers.hasMany(db.stories, {foreignKey: 'designers_id'});
-db.designers.hasMany(db.contents, {foreignKey: 'designers_id'});
-db.designers.belongsTo(db.users, {foreignKey: 'users_id', targetKey: 'id'});
-db.designers.hasMany(db.userSupportDesigners, {foreignKey: 'designers_id'});
-db.designers.hasMany(db.userFollowDesigners, {foreignKey: 'designers_id'});
+db.creators.hasMany(db.stories, {foreignKey: 'creator_id'});
+db.creators.hasMany(db.contents, {foreignKey: 'creator_id'});
+db.creators.belongsTo(db.users, {foreignKey: 'user_id', targetKey: 'id'});
+db.creators.hasMany(db.userSupportcreators, {foreignKey: 'creator_id'});
+db.creators.hasMany(db.userFollowcreators, {foreignKey: 'creator_id'});
 
-db.stories.hasMany(db.contents, {foreignKey: 'stories_id'});
-db.stories.hasMany(db.storyComments, {foreignKey: 'stories_id'});
-db.stories.hasMany(db.userLikeStories, {foreignKey: 'stories_id'});
-db.stories.hasMany(db.storyCollections, {foreignKey: 'stories_id'});
-db.stories.hasMany(db.storyHashtags, {foreignKey: 'stories_id'});
+db.stories.hasMany(db.contents, {foreignKey: 'story_id'});
+db.stories.hasMany(db.storyComments, {foreignKey: 'story_id'});
+db.stories.hasMany(db.userLikeStories, {foreignKey: 'story_id'});
+db.stories.hasMany(db.storyCollections, {foreignKey: 'story_id'});
+db.stories.hasMany(db.storyHashtags, {foreignKey: 'story_id'});
 
-db.contents.hasMany(db.contentComments, {foreignKey: 'contents_id'});
-db.contents.hasMany(db.userLikeContents, {foreignKey: 'contents_id'});
+db.contents.hasMany(db.contentComments, {foreignKey: 'content_id'});
+db.contents.hasMany(db.userLikeContents, {foreignKey: 'content_id'});
 
-db.hashtags.hasMany(db.storyHashtags, {foreignKey: 'hashtags_id'});
+db.hashtags.hasMany(db.storyHashtags, {foreignKey: 'hashtag_id'});
 
 module.exports = db;
 

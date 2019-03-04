@@ -8,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true,
       autoIncrement: true
     },
-    stories_id: {
+    story_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    hashtags_id: {
+    hashtag_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

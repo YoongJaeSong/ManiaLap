@@ -1,8 +1,8 @@
 const express = require('express');
-const {getDesignerProfile} = require('../app/controller/profile');
+const {getCreatorProfile} = require('../app/controller/profile');
 
 const router = express.Router();
 
-router.get('/',getDesignerProfile);
+router.get('/',getCreatorProfile);
 
 module.exports = router;

@@ -13,7 +13,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    users_collections_id: {
+    user_collection_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -21,7 +21,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    stories_id: {
+    story_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

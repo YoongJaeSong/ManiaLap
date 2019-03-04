@@ -1,15 +1,15 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user_collections', {
+  return sequelize.define('certification_applications', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
       autoIncrement: true
     },
-    title: {
-      type: DataTypes.STRING(45),
+    image: {
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     created_at: {
@@ -17,23 +17,15 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    updated_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    deleted_at: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    user_id: {
+    creators_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'users',
+        model: 'creators',
         key: 'id'
       }
     }
   }, {
-    tableName: 'user_collections'
+    tableName: 'certification_applications'
   });
 };

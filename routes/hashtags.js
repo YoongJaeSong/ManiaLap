@@ -1,5 +1,5 @@
 const express = require('express');
-const {autoHashtags, getHashtags} = require('../app/controller/hashtags');
+const {getHashtags} = require('../app/controller/hashtags');
 
 const router = express.Router();
 

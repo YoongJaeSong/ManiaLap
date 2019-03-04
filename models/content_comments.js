@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.DATE,
       allowNull: true
     },
-    users_id: {
+    user_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
@@ -33,7 +33,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'id'
       }
     },
-    contents_id: {
+    content_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

@@ -1,11 +1,11 @@
-const {designers, stories, sequelize} = require('../../models/index');
+const {creators, stories, sequelize} = require('../../models/index');
 
 
 /*
     작가의 정보(작가 활동 명, 소개)를 가져오는 작업
     + 스토리의 개수 + 유저의 프로필 사진
  */
-exports.selectDesigner = async (designerId, flag)=>{
+exports.selectCreator = async (creatorId, flag)=>{
     // query에서 적용할 option에 대한 정보
     let option = {
         attributes: [
@@ -20,28 +20,28 @@ exports.selectDesigner = async (designerId, flag)=>{
                 sequelize.literal(
                     `(SELECT COUNT(*) 
                         FROM stories 
-                       WHERE designers_id = ${designerId} AND private_status >= ${flag})`
+                       WHERE creator_id = ${creatorId} AND private_status >= ${flag})`
                 ),
                 'storyNum'
             ],
             [
                 sequelize.literal(
                     `(SELECT COUNT(*)
-                        FROM user_follow_designers
-                       WHERE designers_id = ${designerId})`
+                        FROM user_follow_creators
+                       WHERE creator_id = ${creatorId})`
                 ),
                 'followNum'
             ],
             [
                 sequelize.literal(
                     `(SELECT COUNT(*)
-                        FROM user_support_designers
-                       WHERE designers_id = ${designerId})`
+                        FROM user_support_creators
+                       WHERE creator_id = ${creatorId})`
                 ),
                 'supportNum'
             ]
         ],
-        where: {id: designerId},
+        where: {id: creatorId},
         include: [
             {model: stories, required: false, attributes: []}
         ]
@@ -49,7 +49,7 @@ exports.selectDesigner = async (designerId, flag)=>{
 
     let result = [];
     try {
-        result = await designers.findAll(option);
+        result = await creators.findAll(option);
     } catch (err) {
         throw err;
     }

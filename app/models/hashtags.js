@@ -57,14 +57,14 @@ exports.searchHashtags = (name) => {
 exports.selectHashtags = async (storyId) => {
 
     let option = {
-        attributes: ['hashtags_id'],
-        where: {stories_id: storyId}
+        attributes: ['hashtag_id'],
+        where: {story_id: storyId}
     }
 
     try {
-        let hashtagsId = await storyHashtags.findAll(option);
+        let hashtagIdList = await storyHashtags.findAll(option);
 
-        if (!Object.keys(hashtagsId).length) {
+        if (!Object.keys(hashtagIdList).length) {
             let error = new Error("No Query Result");
             error.status = 404;
 
@@ -72,8 +72,8 @@ exports.selectHashtags = async (storyId) => {
         }
 
         let arrId = [];
-        for (let obj of hashtagsId) {
-            arrId.push(obj.dataValues.hashtags_id);
+        for (let obj of hashtagIdList) {
+            arrId.push(obj.hashtag_id);
         }
 
         let result = await hashtags.findAll({
