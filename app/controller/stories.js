@@ -11,7 +11,7 @@ exports.createStory = async (req, res, next) => {
     // token에서 designerd를 받는다.
     let creatorId = req.authInfo.designerId;
 
-    if (!designerId) {
+    if (!creatorId) {
         let error = new Error('Invalid approach');
         error.status = 404;
 
@@ -42,7 +42,7 @@ exports.createStory = async (req, res, next) => {
 
         let hashtagNamesSet = new Set(req.body.hashtagNames);
         let hashtagsObj = await checkHashtag(hashtagNamesSet, transaction);
-        console.log(hashtagsObj);
+
         // story와 hashtag를 맵피하는 테이블 작업
         await insertStoryHashtag(result.id, hashtagsObj, transaction);
 
