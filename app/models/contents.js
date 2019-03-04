@@ -20,10 +20,10 @@ exports.selectContents = async (storyId) => {
             "id",
             "description",
             "image_url",
-            [sequelize.literal(`(SELECT COUNT(DISTINCT id) FROM content_comments WHERE contents_id = contents.id)`), 'commentNum'],
-            [sequelize.literal('(SELECT COUNT(DISTINCT id) FROM user_like_contents WHERE contents_id = contents.id)'), 'likeNum']
+            [sequelize.literal(`(SELECT COUNT(DISTINCT id) FROM content_comments WHERE content_id = contents.id)`), 'commentNum'],
+            [sequelize.literal('(SELECT COUNT(DISTINCT id) FROM user_like_contents WHERE content_id = contents.id)'), 'likeNum']
         ],
-        where: {stories_id: storyId},
+        where: {story_id: storyId},
         include: [
             {model: contentComments, required: false, attributes: []},
             {model: userLikeContents, required: false, attributes: []}
@@ -56,7 +56,7 @@ exports.selectContents = async (storyId) => {
 exports.selectContent = async (contentId, storyId) => {
     let option = {
         attributes: ['description', 'image_url'],
-        where: {id: contentId, stories_id: storyId}
+        where: {id: contentId, story_id: storyId}
     };
 
     let result = null;
