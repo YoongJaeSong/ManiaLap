@@ -1,34 +1,30 @@
 /* jshint indent: 2 */
 
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('story_collections', {
+  return sequelize.define('certification_applications', {
     id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true
+    },
+    image: {
+      type: DataTypes.STRING(100),
+      allowNull: false
     },
     created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    user_collection_id: {
+    creators_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {
-        model: 'user_collections',
-        key: 'id'
-      }
-    },
-    story_id: {
-      type: DataTypes.INTEGER(11),
-      allowNull: false,
-      references: {
-        model: 'stories',
+        model: 'creators',
         key: 'id'
       }
     }
   }, {
-    tableName: 'story_collections'
+    tableName: 'certification_applications'
   });
 };
