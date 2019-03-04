@@ -50,6 +50,7 @@ db.contentComments = require('./content_comments')(sequelize, Sequelize);
 db.hashtags = require('./hashtags')(sequelize, Sequelize);
 db.categories = require('./categories')(sequelize, Sequelize);
 db.interests = require('./interests')(sequelize, Sequelize);
+db.certificationImage = require('./certification_applications')(sequelize, Sequelize);
 
 // 매핑 테이블
 db.userFollowcreators = require('./user_follow_creators')(sequelize, Sequelize);

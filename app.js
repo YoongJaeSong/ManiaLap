@@ -10,6 +10,7 @@ const {signUp, signIn} = require('./routes/auth')
 const contents = require('./routes/contents');
 const profile = require('./routes/profile');
 const hashtags = require('./routes/hashtags');
+const creator = require('./routes/creators');
 require('dotenv').config();
 
 const app = express();
@@ -42,6 +43,7 @@ app.use('/api/profile', profile);
 app.use('/api/stories', stories);
 app.use('/api/contents', contents);
 app.use('/api/hashtags', hashtags);
+app.use('/api/creators', creator);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) =>{
