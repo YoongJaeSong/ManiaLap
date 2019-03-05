@@ -10,3 +10,20 @@ exports.applyCreator = async (creatorObj, transaction)=>{
         throw err;
     }
 };
+
+
+/*
+    creator row를 수정하는 작업
+ */
+exports.registerCreator = async (creatorObj, userId) => {
+
+    let options = {where: {user_id: userId}, returning: true, plain: true};
+
+    try {
+        let result = await creators.update(creatorObj, options);
+        console.log(result);
+        return result;
+    } catch (err) {
+        throw err;
+    }
+};

@@ -1,5 +1,5 @@
 const {sequelize} = require('../../models/index');
-const {applyCreator} = require('../models/creators');
+const {applyCreator, registerCreator} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
 
 /*
@@ -9,8 +9,8 @@ const {saveapplication} = require('../models/certifications');
  */
 exports.applyCreators = async (req, res, next) => {
 
-    let userId = req.authInfo.userId;
-
+    // let userId = req.authInfo.userId;
+    let userId = 6;
     let creatorObj = {};
     let input = req.body;
     let applicationObj = {};
@@ -62,7 +62,6 @@ exports.applyCreators = async (req, res, next) => {
 
         let strArr = input["fbUrl"].split('/');
         if(strArr[1].includes("profile.php?")){
-            console.log(strArr[1]);
             fbProfile = strArr[1].split('=');
             creatorObj["fb_url"] = fbProfile[1];
         }else{
@@ -123,8 +122,70 @@ exports.applyCreators = async (req, res, next) => {
     필요한 데이터
      - 닉네임, 소개, 프로필 이미지,
  */
-exports.registerCreators = (req, res, next) => {
+exports.registerCreators = async (req, res, next) => {
 
+    // let userId = req.authInfo.userId;
+    let userId = 6;
 
+    let input = req.body;
+    let creatorObj = {};
 
+    creatorObj['nickname'] = input['nickname'];
+    creatorObj['description'] = input['description'];
+    if(req.file){
+        creatorObj['profile_image_url'] = `${process.env.URL}/uploads/${req.file.filename}`;
+    }
+
+    if(!(input["instaUrl"] || input["fbUrl"] || input["youtubeUrl"] || input["webUrl"])){
+        let error = new Error("No sns url");
+        error['status'] = 404;
+
+        return next(error);
+    }
+
+    if(input["instaUrl"]){
+        let strArr = input["instaUrl"].split('/');
+        creatorObj["insta_url"] = strArr[1];
+    }
+
+    if(input["fbUrl"]){
+        input["fbUrl"] = input["fbUrl"].replace("https://", "");
+
+        let strArr = input["fbUrl"].split('/');
+        if(strArr[1].includes("profile.php?")){
+            fbProfile = strArr[1].split('=');
+            creatorObj["fb_url"] = fbProfile[1];
+        }else{
+            creatorObj["fb_url"] = strArr[1];
+        }
+    }
+
+    if(input["youtubUrl"]){
+        input["youtubeUrl"] = input["youtubeUrl"].replace("https://", "");
+
+        let strArr = input["youtubeUrl"].split('/');
+        if(strArr[1] === "channel"){
+            let error = new Error("Not Valid youtube url");
+            error["status"] = 404;
+
+            return next(error);
+        }
+    }
+
+    if(input["webUrl"]){
+        creatorObj["webUrl"] = input["webUrl"];
+    }
+
+    let result = {};
+    try {
+        result = await registerCreator(creatorObj, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        msg:'success',
+        creator: result,
+    });
 };
