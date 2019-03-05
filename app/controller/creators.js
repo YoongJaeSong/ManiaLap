@@ -1,3 +1,4 @@
+const moment = require('moment');
 const {sequelize} = require('../../models/index');
 const {applyCreator, registerCreator} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
@@ -175,6 +176,8 @@ exports.registerCreators = async (req, res, next) => {
     if(input["webUrl"]){
         creatorObj["webUrl"] = input["webUrl"];
     }
+
+    creatorObj['register_date'] = moment().format('YYYY-MM-DD HH:mm:ss');
 
     let result = {};
     try {
