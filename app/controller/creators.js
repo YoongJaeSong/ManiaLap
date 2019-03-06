@@ -137,7 +137,7 @@ exports.registerCreators = async (req, res, next) => {
 
 
 /*
-    [GET] /api/creators/sns?type=&url=
+    [GET] /api/creators/sns/check?type=&url=
     sns 주소 중복 확인을 위한 api
 
     query parameter
@@ -195,7 +195,7 @@ exports.doubleCheckBrand = async (req, res, next) => {
     Query Parameter
      - name: 작가 활동 명
  */
-exports.doubleCheckNickname = async (req, res, next) =>{
+exports.doubleCheckNickname = async (req, res, next) => {
 
     let userId = req.authInfo.userId;
     const nickname = req.query.name;
@@ -210,5 +210,27 @@ exports.doubleCheckNickname = async (req, res, next) =>{
     res.json({
         msg: `${nickname} is existed`,
     });
+};
 
+
+/*
+    [GET] /api/creators/sns
+    creator 신청 때 입력한 sns 주소 가져오는 api
+ */
+exports.getSns = async (req, res, next) => {
+
+    let userId = req.authInfo.userId;
+
+    let result = null;
+    try {
+        result = await findSnsUrl(null, null, userId);
+    } catch (err) {
+        return next(err);
+    }g
+
+    res.status(200);
+    res.json({
+        msg: 'success',
+        sns: result,
+    });
 };
