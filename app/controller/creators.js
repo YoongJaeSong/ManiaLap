@@ -1,6 +1,6 @@
 const moment = require('moment');
 const {sequelize} = require('../../models/index');
-const {applyCreator, registerCreator, findSnsUrl} = require('../models/creators');
+const {applyCreator, registerCreator, findSnsUrl, findBrandName, findNickname} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
 const {checkValid, filterFacebook, filterInsta, filterYoutube} = require('../../services/filter_sns');
 
@@ -11,8 +11,7 @@ const {checkValid, filterFacebook, filterInsta, filterYoutube} = require('../../
  */
 exports.applyCreators = async (req, res, next) => {
 
-    // let userId = req.authInfo.userId;
-    let userId = 6;
+    let userId = req.authInfo.userId;
     let creatorObj = {};
     let input = req.body;
     let applicationObj = {};
@@ -98,8 +97,7 @@ exports.applyCreators = async (req, res, next) => {
  */
 exports.registerCreators = async (req, res, next) => {
 
-    // let userId = req.authInfo.userId;
-    let userId = 6;
+    let userId = req.authInfo.userId;
 
     let input = req.body;
     let creatorObj = {};
@@ -148,21 +146,69 @@ exports.registerCreators = async (req, res, next) => {
  */
 exports.doubleCheckSns = async (req, res, next) => {
 
-    // let userId = req.authInfo.userId;
-    let userId = 6;
-
+    let userId = req.authInfo.userId;
     let type = parseInt(req.query.type);
     let url = req.query.url;
 
-    let result = null;
     try {
-        result = await findSnsUrl(type, url, userId);
+        await findSnsUrl(type, url, userId);
     } catch (err) {
         return next(err);
     }
 
     res.status(200);
     res.json({
-        temp: result
+        msg: `${url} is existed`,
     });
+};
+
+
+/*
+    [GET] /api/creators/brand?name=
+    작가 신청시 브랜드 이름 중복확인
+
+    query parameter
+     - name: 브랜드 명
+ */
+exports.doubleCheckBrand = async (req, res, next) => {
+
+    let userId = req.authInfo.userId;
+    const brandName = req.query.name;
+
+    try {
+        await findBrandName(brandName, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        msg: `${brandName} is existed`,
+    });
+};
+
+
+/*
+    [GET] /api/creators/nickname?name=
+    작가 등록시 활동명 중복 확인
+
+    Query Parameter
+     - name: 작가 활동 명
+ */
+exports.doubleCheckNickname = async (req, res, next) =>{
+
+    let userId = req.authInfo.userId;
+    const nickname = req.query.name;
+
+    try {
+        await findNickname(nickname, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        msg: `${nickname} is existed`,
+    });
+
 };
