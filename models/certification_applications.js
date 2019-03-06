@@ -17,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
-    creators_id: {
+    creator_id: {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       references: {

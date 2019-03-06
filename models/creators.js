@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     nickname: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     },
     description: {
       type: DataTypes.STRING(200),
@@ -49,10 +49,22 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true,
       unique: true
     },
-    register_date: {
+    created_at: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    deleted_at: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    register_date: {
+      type: DataTypes.DATE,
+      allowNull: true
     },
     register_type: {
       type: DataTypes.INTEGER(11),
