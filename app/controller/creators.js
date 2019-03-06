@@ -226,7 +226,7 @@ exports.getSns = async (req, res, next) => {
         result = await findSnsUrl(null, null, userId);
     } catch (err) {
         return next(err);
-    }g
+    }
 
     res.status(200);
     res.json({
