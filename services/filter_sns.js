@@ -42,7 +42,7 @@ exports.filterYoutube = (youtube) => {
     youtube = youtube.replace('https://', '');
     let strArr = youtube.split('/');
 
-    if (strArr[1] === 'channel') {
+    if (strArr[1] !== 'channel') {
         let error = new Error("Not Valid youtube url");
         error["status"] = 404;
 
