@@ -1,6 +1,6 @@
 const moment = require('moment');
 const {sequelize} = require('../../models/index');
-const {applyCreator, registerCreator} = require('../models/creators');
+const {applyCreator, registerCreator, findSnsUrl} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
 const {checkValid, filterFacebook, filterInsta, filterYoutube} = require('../../services/filter_sns');
 
@@ -57,7 +57,7 @@ exports.applyCreators = async (req, res, next) => {
     creatorObj["insta_url"] = filterInsta(input['instaUrl']);
     creatorObj['fb_url'] = filterFacebook(input['fbUrl']);
     creatorObj['youtube_url'] = filterYoutube(input['youtube']);
-    creatorObj["webUrl"] = input["webUrl"];
+    creatorObj["webUrl"] = input["webUrl"].replace('https://', '');
 
     // get transaction
     let transaction = await sequelize.transaction();
@@ -119,7 +119,7 @@ exports.registerCreators = async (req, res, next) => {
     creatorObj["insta_url"] = filterInsta(input['instaUrl']);
     creatorObj['fb_url'] = filterFacebook(input['fbUrl']);
     creatorObj['youtube_url'] = filterYoutube(input['youtube']);
-    creatorObj["webUrl"] = input["webUrl"];
+    creatorObj["webUrl"] = input["webUrl"].replace('https://');
 
     creatorObj['register_date'] = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -146,10 +146,23 @@ exports.registerCreators = async (req, res, next) => {
      - type: 어떤 sns의 주소인지 확인을 위해 필요
              0-insta, 1-facebook, 2-youtube, 3-web
  */
-exports.doubleCheckSns = (req, res, next) => {
+exports.doubleCheckSns = async (req, res, next) => {
 
     // let userId = req.authInfo.userId;
     let userId = 6;
 
+    let type = parseInt(req.query.type);
+    let url = req.query.url;
 
+    let result = null;
+    try {
+        result = await findSnsUrl(type, url, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        temp: result
+    });
 };

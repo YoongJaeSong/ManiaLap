@@ -1,9 +1,10 @@
-const {creators} = require('../../models/index');
+const {creators, Op} = require('../../models/index');
+const {filterYoutube, filterFacebook, filterInsta} = require('../../services/filter_sns');
 
 /*
     creators 테이블에 row를 추가하는 작업
  */
-exports.applyCreator = async (creatorObj, transaction)=>{
+exports.applyCreator = async (creatorObj, transaction) => {
     try {
         return await creators.create(creatorObj, {transaction});
     } catch (err) {
@@ -23,5 +24,56 @@ exports.registerCreator = async (creatorObj, userId) => {
         return await creators.update(creatorObj, options);
     } catch (err) {
         throw err;
+    }
+};
+
+
+/*
+    creator 등록시 sns주소 중복 여부 확인
+ */
+exports.findSnsUrl = async (type, url, userId) => {
+
+    let options = {
+        attributes: ['id'],
+    };
+
+    options['where'] = {};
+    switch (type) {
+        case 0: {
+            url = filterInsta(url);
+            options['where'] = {'insta_url': url};
+            break;
+        }
+        case 1: {
+            url = filterFacebook(url);
+            options['where'] = {'fb_url': url};
+            break;
+        }
+        case 2: {
+            url = filterYoutube(url);
+            options['where'] = {'youtube_url': url};
+            break;
+        }
+        case 3: {
+            url = url.replace('https://', '');
+            options['where'] = {'web_url': url};
+            break;
+        }
+    }
+    options['where']['user_id'] = {[Op.ne]: userId};
+    let result = null;
+    try {
+        result = await creators.findOne(options);
+    } catch (err) {
+        throw err;
+    }
+
+    if (result) {
+        return result;
+    } else {
+        let error = new Error('No query result');
+        error['status'] = 404;
+
+        throw error;
     }
 };
