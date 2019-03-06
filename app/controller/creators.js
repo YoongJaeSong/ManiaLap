@@ -2,6 +2,7 @@ const moment = require('moment');
 const {sequelize} = require('../../models/index');
 const {applyCreator, registerCreator} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
+const {checkValid, filterFacebook, filterInsta, filterYoutube} = require('../../services/filter_sns');
 
 /*
     작가 신청
@@ -26,65 +27,37 @@ exports.applyCreators = async (req, res, next) => {
         2: 사업자/디자인 등록증으로 신청
      */
     if (input["registerType"] === '1') {
-        if(input["promotionCode"] !== '1') {
+        if (input["promotionCode"] !== '1') {
             let error = new Error("Not Valid promotion code");
             error.status = 404;
 
             return next(error);
-        }else{
+        } else {
             creatorObj["register_type"] = input["registerType"];
         }
     }
-    else if(input["registerType"] === '2'){
+    else if (input["registerType"] === '2') {
         applicationObj["image"] = req.file.filename;
         creatorObj['register_type'] = input['registerType'];
     }
-    else{
+    else {
         let error = new Error("Not Valid input data");
         error['status'] = 404;
 
         return next(error);
     }
 
-    if(!(input["instaUrl"] || input["fbUrl"] || input["youtubeUrl"] || input["webUrl"])){
-        let error = new Error("No sns url");
-        error['status'] = 404;
-
-        return next(error);
+    // 적어도 sns주소가 하나 이상인지 확인하는 작업
+    try {
+        checkValid(input['instaUrl'], input['fbUrl'], input['youtubeUrl'], input['webUrl']);
+    } catch (err) {
+        return next(err);
     }
 
-    if(input["instaUrl"]){
-        let strArr = input["instaUrl"].split('/');
-        creatorObj["insta_url"] = strArr[1];
-    }
-
-    if(input["fbUrl"]){
-        input["fbUrl"] = input["fbUrl"].replace("https://", "");
-
-        let strArr = input["fbUrl"].split('/');
-        if(strArr[1].includes("profile.php?")){
-            fbProfile = strArr[1].split('=');
-            creatorObj["fb_url"] = fbProfile[1];
-        }else{
-            creatorObj["fb_url"] = strArr[1];
-        }
-    }
-
-    if(input["youtubUrl"]){
-        input["youtubeUrl"] = input["youtubeUrl"].replace("https://", "");
-
-        let strArr = input["youtubeUrl"].split('/');
-        if(strArr[1] === "channel"){
-            let error = new Error("Not Valid youtube url");
-            error["status"] = 404;
-
-            return next(error);
-        }
-    }
-
-    if(input["webUrl"]){
-        creatorObj["webUrl"] = input["webUrl"];
-    }
+    creatorObj["insta_url"] = filterInsta(input['instaUrl']);
+    creatorObj['fb_url'] = filterFacebook(input['fbUrl']);
+    creatorObj['youtube_url'] = filterYoutube(input['youtube']);
+    creatorObj["webUrl"] = input["webUrl"];
 
     // get transaction
     let transaction = await sequelize.transaction();
@@ -95,11 +68,11 @@ exports.applyCreators = async (req, res, next) => {
         // creator row 생성
         creator = await applyCreator(creatorObj, transaction);
 
-        if(input['registerType'] === '2'){
+        if (input['registerType'] === '2') {
             applicationObj['creator_id'] = creator['id'];
             application = await saveapplication(applicationObj, transaction);
         }
-        
+
         creator['dataValues']['certification_image'] = application['image'];
     } catch (err) {
         await transaction.rollback();
@@ -133,49 +106,20 @@ exports.registerCreators = async (req, res, next) => {
 
     creatorObj['nickname'] = input['nickname'];
     creatorObj['description'] = input['description'];
-    if(req.file){
+    if (req.file) {
         creatorObj['profile_image_url'] = `${process.env.URL}/uploads/${req.file.filename}`;
     }
 
-    if(!(input["instaUrl"] || input["fbUrl"] || input["youtubeUrl"] || input["webUrl"])){
-        let error = new Error("No sns url");
-        error['status'] = 404;
-
-        return next(error);
+    try {
+        checkValid(input['instaUrl'], input['fbUrl'], input['youtubeUrl'], input['webUrl']);
+    } catch (err) {
+        return next(err);
     }
 
-    if(input["instaUrl"]){
-        let strArr = input["instaUrl"].split('/');
-        creatorObj["insta_url"] = strArr[1];
-    }
-
-    if(input["fbUrl"]){
-        input["fbUrl"] = input["fbUrl"].replace("https://", "");
-
-        let strArr = input["fbUrl"].split('/');
-        if(strArr[1].includes("profile.php?")){
-            fbProfile = strArr[1].split('=');
-            creatorObj["fb_url"] = fbProfile[1];
-        }else{
-            creatorObj["fb_url"] = strArr[1];
-        }
-    }
-
-    if(input["youtubUrl"]){
-        input["youtubeUrl"] = input["youtubeUrl"].replace("https://", "");
-
-        let strArr = input["youtubeUrl"].split('/');
-        if(strArr[1] === "channel"){
-            let error = new Error("Not Valid youtube url");
-            error["status"] = 404;
-
-            return next(error);
-        }
-    }
-
-    if(input["webUrl"]){
-        creatorObj["webUrl"] = input["webUrl"];
-    }
+    creatorObj["insta_url"] = filterInsta(input['instaUrl']);
+    creatorObj['fb_url'] = filterFacebook(input['fbUrl']);
+    creatorObj['youtube_url'] = filterYoutube(input['youtube']);
+    creatorObj["webUrl"] = input["webUrl"];
 
     creatorObj['register_date'] = moment().format('YYYY-MM-DD HH:mm:ss');
 
@@ -188,7 +132,24 @@ exports.registerCreators = async (req, res, next) => {
 
     res.status(200);
     res.json({
-        msg:'success',
+        msg: 'success',
         creator: result,
     });
+};
+
+
+/*
+    [GET] /api/creators/sns?type=&url=
+    sns 주소 중복 확인을 위한 api
+
+    query parameter
+     - type: 어떤 sns의 주소인지 확인을 위해 필요
+             0-insta, 1-facebook, 2-youtube, 3-web
+ */
+exports.doubleCheckSns = (req, res, next) => {
+
+    // let userId = req.authInfo.userId;
+    let userId = 6;
+
+
 };

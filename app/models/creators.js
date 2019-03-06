@@ -20,9 +20,7 @@ exports.registerCreator = async (creatorObj, userId) => {
     let options = {where: {user_id: userId}, returning: true, plain: true};
 
     try {
-        let result = await creators.update(creatorObj, options);
-        console.log(result);
-        return result;
+        return await creators.update(creatorObj, options);
     } catch (err) {
         throw err;
     }
