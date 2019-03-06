@@ -34,7 +34,7 @@ exports.registerCreator = async (creatorObj, userId) => {
 exports.findSnsUrl = async (type, url, userId) => {
 
     let options = {
-        attributes: ['id'],
+        attributes: ['id', 'insta_url', 'fb_url', 'youtube_url', 'web_url'],
     };
 
     options['where'] = {};
@@ -60,7 +60,13 @@ exports.findSnsUrl = async (type, url, userId) => {
             break;
         }
     }
-    options['where']['user_id'] = {[Op.ne]: userId};
+
+    if(type) {
+        options['where']['user_id'] = {[Op.ne]: userId};
+    }else{
+        options['where'] = {user_id: userId};
+    }
+
     let result = null;
     try {
         result = await creators.findOne(options);
