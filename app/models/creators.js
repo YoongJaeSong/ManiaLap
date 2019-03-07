@@ -83,3 +83,64 @@ exports.findSnsUrl = async (type, url, userId) => {
         throw error;
     }
 };
+
+
+/*
+    creator 신청시 브랜드 이름 중복을 확인하는 작업
+ */
+exports.findBrandName = async (name, userId) =>{
+    let options = {
+        attributes: ['id'],
+        where:{
+            brand_name: name,
+            user_id: {[Op.ne]: userId}
+        }
+    };
+
+    let result = null;
+    try {
+        result = await creators.findOne(options);
+    } catch (err) {
+        throw err;
+    }
+
+    if (result) {
+        return result;
+    } else {
+        let error = new Error('No query result');
+        error['status'] = 404;
+
+        throw error;
+    }
+};
+
+
+/*
+    creator 등록시 활동명 중복 확인 작업
+ */
+exports.findNickname = async (nickname, userId)=>{
+
+    let options = {
+        attributes: ['id'],
+        where: {
+            nickname: nickname,
+            user_id: {[Op.ne]: userId},
+        }
+    };
+
+    let result = null;
+    try {
+        result = await creators.findOne(options);
+    } catch (err) {
+        throw err;
+    }
+
+    if (result) {
+        return result;
+    } else {
+        let error = new Error('No query result');
+        error['status'] = 404;
+
+        throw error;
+    }
+};

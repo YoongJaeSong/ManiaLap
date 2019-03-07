@@ -1,6 +1,6 @@
 const moment = require('moment');
 const {sequelize} = require('../../models/index');
-const {applyCreator, registerCreator, findSnsUrl} = require('../models/creators');
+const {applyCreator, registerCreator, findSnsUrl, findBrandName, findNickname} = require('../models/creators');
 const {saveapplication} = require('../models/certifications');
 const {checkValid, filterFacebook, filterInsta, filterYoutube} = require('../../services/filter_sns');
 
@@ -147,20 +147,68 @@ exports.registerCreators = async (req, res, next) => {
 exports.doubleCheckSns = async (req, res, next) => {
 
     let userId = req.authInfo.userId;
-
     let type = parseInt(req.query.type);
     let url = req.query.url;
 
-    let result = null;
     try {
-        result = await findSnsUrl(type, url, userId);
+        await findSnsUrl(type, url, userId);
     } catch (err) {
         return next(err);
     }
 
     res.status(200);
     res.json({
-        temp: result
+        msg: `${url} is existed`,
+    });
+};
+
+
+/*
+    [GET] /api/creators/brand?name=
+    작가 신청시 브랜드 이름 중복확인
+
+    query parameter
+     - name: 브랜드 명
+ */
+exports.doubleCheckBrand = async (req, res, next) => {
+
+    let userId = req.authInfo.userId;
+    const brandName = req.query.name;
+
+    try {
+        await findBrandName(brandName, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        msg: `${brandName} is existed`,
+    });
+};
+
+
+/*
+    [GET] /api/creators/nickname?name=
+    작가 등록시 활동명 중복 확인
+
+    Query Parameter
+     - name: 작가 활동 명
+ */
+exports.doubleCheckNickname = async (req, res, next) => {
+
+    let userId = req.authInfo.userId;
+    const nickname = req.query.name;
+
+    try {
+        await findNickname(nickname, userId);
+    } catch (err) {
+        return next(err);
+    }
+
+    res.status(200);
+    res.json({
+        msg: `${nickname} is existed`,
     });
 };
 
@@ -169,7 +217,7 @@ exports.doubleCheckSns = async (req, res, next) => {
     [GET] /api/creators/sns
     creator 신청 때 입력한 sns 주소 가져오는 api
  */
-exports.getSns = async (req, res, next)=>{
+exports.getSns = async (req, res, next) => {
 
     let userId = req.authInfo.userId;
 
@@ -182,7 +230,7 @@ exports.getSns = async (req, res, next)=>{
 
     res.status(200);
     res.json({
-        msg:'success',
+        msg: 'success',
         sns: result,
     });
 };
